@@ -6,55 +6,123 @@
   <title>Zach's Website</title>
   <style>
     :root {
-      --border:#e5e7eb;
-      --text:#111827;
-      --muted:#6b7280;
-      --bg:#ffffff;
-      --tab-bg:#f9fafb;
-      --tab-active:#111827;
+      --blue-900:#0f2f6e;
+      --blue-800:#17438f;
+      --blue-700:#1d4ed8;
+      --blue-100:#dbeafe;
+      --blue-50:#eff6ff;
+      --border:#c7d2fe;
+      --text:#172033;
+      --muted:#53627a;
+      --bg:#f8fbff;
+      --surface:#ffffff;
+      --tab-bg:#ffffff;
+      --tab-active:#17438f;
       --tab-active-text:#ffffff;
-      --radius:12px;
+      --radius:8px;
+      --shadow:0 18px 45px rgba(15, 47, 110, 0.12);
     }
 
     body {
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-      background:var(--bg);
+      background:
+        linear-gradient(180deg, rgba(219, 234, 254, 0.95) 0, rgba(248, 251, 255, 0.94) 260px),
+        repeating-linear-gradient(90deg, rgba(29, 78, 216, 0.04) 0 1px, transparent 1px 64px),
+        var(--bg);
     }
 
-    header {
-      padding: 28px 20px 14px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #1d4ed8 0%, #60a5fa 45%, #cad7ff 100%);
+    .site-chrome {
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    h1 {
+    .site-header {
+      padding: 36px 20px 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      color:#fff;
+      background:
+        linear-gradient(135deg, rgba(15, 47, 110, 0.98), rgba(29, 78, 216, 0.92) 58%, rgba(96, 165, 250, 0.86)),
+        var(--blue-700);
+      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+      transition: padding 180ms ease, box-shadow 180ms ease;
+    }
+
+    .site-title {
       margin: 0;
-      font-size: 40px;
+      font-size: clamp(34px, 5vw, 56px);
       font-weight: 800;
       text-align: center;
-      letter-spacing: 0.2px;
+      letter-spacing: 0;
+      transition: font-size 180ms ease;
     }
 
-    .wrap { padding: 14px 20px 20px; }
+    .tagline {
+      max-width: 680px;
+      margin: 10px auto 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: center;
+      max-height: 48px;
+      overflow: hidden;
+      transition: opacity 180ms ease, max-height 180ms ease, margin 180ms ease;
+    }
+
+    .nav-shell {
+      padding: 0 16px;
+      background: rgba(248, 251, 255, 0.96);
+      border-bottom: 1px solid rgba(199, 210, 254, 0.85);
+      box-shadow: 0 12px 30px rgba(15, 47, 110, 0.08);
+    }
+
+    .nav-inner {
+      width:min(1180px, 100%);
+      margin:0 auto;
+    }
+
+    .wrap {
+      width:min(1180px, calc(100% - 32px));
+      margin: 16px auto 32px;
+      min-height: calc(100vh + 180px);
+    }
 
     .tabs {
       display:flex;
       flex-wrap: wrap;
       gap:8px;
-      margin-bottom:12px;
+      margin:0;
+      padding:6px;
       justify-content: center;
+      border:1px solid rgba(199, 210, 254, 0.85);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .show-legacy-nav .tabs {
+      border-bottom-color: rgba(199, 210, 254, 0.75);
+      border-radius: var(--radius) var(--radius) 0 0;
     }
 
     .tabbtn {
-      border:1px solid var(--border);
+      border:1px solid transparent;
       background:var(--tab-bg);
-      padding:10px 12px;
-      border-radius:10px;
+      padding:7px 12px;
+      border-radius:6px;
       cursor:pointer;
+      font-size:13px;
       font-weight:700;
+      line-height:1.15;
       color:var(--text);
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .tabbtn:hover {
+      border-color:var(--border);
+      background:var(--blue-50);
+      transform: translateY(-1px);
     }
 
     .tabbtn[aria-selected="true"] {
@@ -67,21 +135,69 @@
     .panel.active { display:block; }
 
     .subtabs {
-      display:flex;
+      display:none;
       flex-wrap: wrap;
-      gap:8px;
-      margin: 10px 0 12px;
+      gap:6px;
+      margin: -1px 0 0;
       justify-content: center;
+      padding:5px;
+      border:1px solid rgba(199, 210, 254, 0.75);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background:rgba(255, 255, 255, 0.78);
+    }
+
+    .show-legacy-nav .subtabs {
+      display:flex;
+    }
+
+    .legacy-recent-active .subtabs {
+      border-radius: 0;
+    }
+
+    .legacy-context {
+      display:none;
+      margin: -1px 0 0;
+      padding: 9px 14px 10px;
+      border: 1px solid rgba(199, 210, 254, 0.75);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .legacy-recent-active .legacy-context {
+      display:block;
+    }
+
+    .legacy-context h2 {
+      margin:0 0 4px;
+      color:var(--blue-900);
+      font-size:18px;
+      font-weight:800;
+      line-height:1.2;
+    }
+
+    .legacy-context p {
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.32;
     }
 
     .subtabbtn {
-      border:1px solid var(--border);
+      border:1px solid transparent;
       background:var(--tab-bg);
-      padding:9px 11px;
-      border-radius:10px;
+      padding:6px 10px;
+      border-radius:6px;
       cursor:pointer;
+      font-size:13px;
       font-weight:700;
+      line-height:1.15;
       color:var(--text);
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    .subtabbtn:hover {
+      border-color:var(--border);
+      background:var(--blue-50);
     }
 
     .subtabbtn[aria-selected="true"] {
@@ -90,39 +206,76 @@
       border-color:var(--tab-active);
     }
 
-    .card {
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      background:#fff;
-      padding: 14px 14px 12px;
-      margin-bottom: 12px;
-    }
-
-    .card h2 {
-      margin: 0 0 6px;
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
     .frame {
       width:100%;
-      height: 875px;
-      border:1px solid var(--border);
+      height: calc(100vh + 120px);
+      min-height: 820px;
+      border:1px solid rgba(199, 210, 254, 0.9);
       border-radius:var(--radius);
       background:#fff;
+      box-shadow: var(--shadow);
+      transition: height 180ms ease, min-height 180ms ease;
     }
 
-    @media (max-width: 520px) {
-      h1 { font-size: 32px; }
+    .legacy-recent-active .wrap {
+      margin:0 auto;
+      min-height:auto;
+    }
+
+    .recent-frame {
+      display:block;
+      height: calc(100vh - 365px);
+      min-height: 360px;
+      border-top:0;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .is-scrolled .site-header {
+      padding: 8px 20px 7px;
+      box-shadow: 0 4px 16px rgba(15, 47, 110, 0.22);
+    }
+
+    .is-scrolled .site-title {
+      font-size: 22px;
+    }
+
+    .is-scrolled .tagline {
+      margin-top: 0;
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .is-scrolled .frame {
+      height: calc(100vh + 220px);
+      min-height: 900px;
+    }
+
+    .is-scrolled .recent-frame {
+      height: calc(100vh - 217px);
+      min-height: 460px;
+    }
+
+    @media (max-width: 640px) {
+      .site-header { padding-top: 30px; }
 
       .frame {
-        height: 600px;
+        height: calc(100vh + 80px);
+        min-height: 680px;
+      }
+
+      .recent-frame {
+        height: calc(100vh - 318px);
+        min-height: 320px;
+      }
+
+      .is-scrolled .frame {
+        height: calc(100vh + 140px);
+        min-height: 760px;
+      }
+
+      .is-scrolled .recent-frame {
+        height: calc(100vh - 226px);
+        min-height: 400px;
       }
     }
 
@@ -131,44 +284,49 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Zach's Website</h1>
-  </header>
+  <div class="site-chrome">
+    <header class="site-header">
+      <h1 class="site-title">Zach's Website</h1>
+      <p class="tagline">A clean home for projects, experiments, and the Legacy Drives tracker.</p>
+    </header>
+
+    <div class="nav-shell">
+      <div class="nav-inner">
+        <div class="tabs" role="tablist" aria-label="Site Sections">
+          <button class="tabbtn" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">
+            Home
+          </button>
+          <button class="tabbtn" role="tab" id="tab-legacy-drives" aria-controls="panel-legacy-drives" aria-selected="false">
+            Legacy Drives
+          </button>
+        </div>
+
+        <div class="subtabs" role="tablist" aria-label="Legacy Drives Seasons">
+          <button class="subtabbtn" role="tab" id="subtab-LD-recent" aria-controls="subpanel-LD-recent" aria-selected="true">
+            Recent
+          </button>
+          <button class="subtabbtn" role="tab" id="subtab-LD-regular" aria-controls="subpanel-LD-regular" aria-selected="false">
+            Regular Season
+          </button>
+          <button class="subtabbtn" role="tab" id="subtab-LD-post" aria-controls="subpanel-LD-post" aria-selected="false">
+            Post Season
+          </button>
+        </div>
+
+        <div class="legacy-context" id="legacy-recent-info">
+          <h2>Recent Legacy Drives (REG + POST)</h2>
+          <p>Most recent first | Seasons: 2021-2025 | Generated: 2026-06-15 17:13</p>
+          <p>Scroll down for older drives (last 5 seasons).</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="wrap">
-    <div class="tabs" role="tablist" aria-label="Site Sections">
-      <button class="tabbtn" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">
-        Home
-      </button>
-      <button class="tabbtn" role="tab" id="tab-legacy-drives" aria-controls="panel-legacy-drives" aria-selected="false">
-        Legacy Drives
-      </button>
-    </div>
-
-    <section id="panel-home" class="panel active" role="tabpanel" aria-labelledby="tab-home">
-      <div class="card">
-        <h2>About</h2>
-        <p>
-          I use this domain for projects and experiments.
-        </p>
-      </div>
-    </section>
-
+    <section id="panel-home" class="panel active" role="tabpanel" aria-labelledby="tab-home"></section>
     <section id="panel-legacy-drives" class="panel" role="tabpanel" aria-labelledby="tab-legacy-drives">
-      <div class="subtabs" role="tablist" aria-label="Legacy Drives Seasons">
-        <button class="subtabbtn" role="tab" id="subtab-LD-recent" aria-controls="subpanel-LD-recent" aria-selected="true">
-          Recent
-        </button>
-        <button class="subtabbtn" role="tab" id="subtab-LD-regular" aria-controls="subpanel-LD-regular" aria-selected="false">
-          Regular Season
-        </button>
-        <button class="subtabbtn" role="tab" id="subtab-LD-post" aria-controls="subpanel-LD-post" aria-selected="false">
-          Post Season
-        </button>
-      </div>
-
       <section id="subpanel-LD-recent" class="panel active" role="tabpanel" aria-labelledby="subtab-LD-recent">
-        <iframe class="frame" src="legacy-drive/recent_legacy_drives.html" title="Recent Legacy Drives"></iframe>
+        <iframe class="frame recent-frame" src="legacy-drive/recent_legacy_drives.html" title="Recent Legacy Drives"></iframe>
       </section>
       <section id="subpanel-LD-regular" class="panel" role="tabpanel" aria-labelledby="subtab-LD-regular">
         <iframe class="frame" src="legacy-drive/regular_season_legacy_drives_leaderboard.html" title="Regular Season Leaderboard"></iframe>
@@ -192,6 +350,10 @@
       { btn: document.getElementById('subtab-LD-regular'), panel: document.getElementById('subpanel-LD-regular') },
       { btn: document.getElementById('subtab-LD-post'), panel: document.getElementById('subpanel-LD-post') },
     ];
+    const recentFrame = document.querySelector('.recent-frame');
+    let activeMainIndex = 0;
+    let activeLegacyIndex = 0;
+    let recentFrameScrolled = false;
 
     function activate(tabs, index) {
       tabs.forEach((t, i) => {
@@ -201,28 +363,82 @@
       });
     }
 
-    mainTabs[0].btn.addEventListener('click', () => activate(mainTabs, 0));
-    mainTabs[1].btn.addEventListener('click', () => activate(mainTabs, 1));
-    legacyTabs[0].btn.addEventListener('click', () => activate(legacyTabs, 0));
-    legacyTabs[1].btn.addEventListener('click', () => activate(legacyTabs, 1));
-    legacyTabs[2].btn.addEventListener('click', () => activate(legacyTabs, 2));
+    function syncLegacyChrome() {
+      const legacyShown = activeMainIndex === 1;
+      document.body.classList.toggle('show-legacy-nav', legacyShown);
+      document.body.classList.toggle('legacy-recent-active', legacyShown && activeLegacyIndex === 0);
+      updateChromeState();
+    }
+
+    function activateMain(index) {
+      activeMainIndex = index;
+      activate(mainTabs, index);
+      syncLegacyChrome();
+    }
+
+    function activateLegacy(index) {
+      activeLegacyIndex = index;
+      activate(legacyTabs, index);
+      syncLegacyChrome();
+    }
+
+    function recentFrameScrollY() {
+      if (!recentFrame || !document.body.classList.contains('legacy-recent-active')) return 0;
+      if (recentFrameScrolled) return 17;
+
+      try {
+        const win = recentFrame.contentWindow;
+        const doc = recentFrame.contentDocument;
+        return win?.scrollY || doc?.documentElement?.scrollTop || doc?.body?.scrollTop || 0;
+      } catch (error) {
+        return 0;
+      }
+    }
+
+    function updateChromeState() {
+      document.body.classList.toggle('is-scrolled', window.scrollY > 16 || recentFrameScrollY() > 16);
+    }
+
+    mainTabs[0].btn.addEventListener('click', () => activateMain(0));
+    mainTabs[1].btn.addEventListener('click', () => activateMain(1));
+    legacyTabs[0].btn.addEventListener('click', () => activateLegacy(0));
+    legacyTabs[1].btn.addEventListener('click', () => activateLegacy(1));
+    legacyTabs[2].btn.addEventListener('click', () => activateLegacy(2));
+
+    if (recentFrame) {
+      recentFrame.addEventListener('load', () => {
+        try {
+          recentFrame.contentWindow.addEventListener('scroll', updateChromeState, { passive: true });
+        } catch (error) {
+          // Same-origin access is available for the local static site; ignore if a browser blocks it.
+        }
+      });
+    }
+
+    window.addEventListener('message', (event) => {
+      if (!event.data || event.data.type !== 'legacy-drive-recent-scroll') return;
+      recentFrameScrolled = Number(event.data.scrollY || 0) > 16;
+      updateChromeState();
+    });
 
     function applyHash() {
       const h = (location.hash || '').toLowerCase();
 
       if (h === '#legacy' || h === '#legacy-regular' || h === '#legacy-post') {
-        activate(mainTabs, 1);
+        activateMain(1);
       } else {
-        activate(mainTabs, 0);
+        activateMain(0);
       }
 
-      if (h === '#legacy-post') activate(legacyTabs, 2);
-      else if (h === '#legacy-regular') activate(legacyTabs, 1);
-      else activate(legacyTabs, 0);
+      if (h === '#legacy-post') activateLegacy(2);
+      else if (h === '#legacy-regular') activateLegacy(1);
+      else activateLegacy(0);
     }
 
     window.addEventListener('hashchange', applyHash);
+    window.addEventListener('scroll', updateChromeState, { passive: true });
     applyHash();
+    updateChromeState();
   </script>
 </body>
 </html>

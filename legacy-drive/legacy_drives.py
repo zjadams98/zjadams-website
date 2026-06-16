@@ -408,7 +408,11 @@ def _render_section(
       <h1>{title}</h1>
       <div class="subtitle">{subtitle}</div>
 
-      <div class="criteria">{criteria_html}</div>
+      <button class="criteria-toggle" type="button" aria-expanded="false" aria-controls="criteria-panel">
+        <span>Legacy Drive Opportunity Criteria</span>
+        <span class="criteria-indicator" aria-hidden="true">+</span>
+      </button>
+      <div class="criteria" id="criteria-panel" hidden>{criteria_html}</div>
 
       <div class="search-wrap">
           <div class="search-row">
@@ -453,8 +457,7 @@ def generate_leaderboards_html(
     generated_ts = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     criteria_reg = """
-        <div class="criteria-title">Legacy Drive Opportunity Criteria:</div>
-        Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1–8 points. OT: All Drives
+        Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1-8 points. OT: All Drives
 
         <div class="section-header">Q4 Result:</div>
         Success = Lead or Tied at Drive End<br>
@@ -468,8 +471,7 @@ def generate_leaderboards_html(
     """
 
     criteria_post = """
-        <div class="criteria-title">Legacy Drive Opportunity Criteria:</div>
-        Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1–8 points. OT: All Drives
+        Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1-8 points. OT: All Drives
 
         <div class="section-header">Q4 Result:</div>
         Success = Lead or Tied at Drive End<br>
@@ -491,100 +493,213 @@ def generate_leaderboards_html(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{page_title}</title>
   <style>
+    :root {{
+      --blue-900:#0f2f6e;
+      --blue-800:#17438f;
+      --blue-700:#1d4ed8;
+      --blue-100:#dbeafe;
+      --blue-50:#eff6ff;
+      --border:#c7d2fe;
+      --text:#172033;
+      --muted:#53627a;
+      --surface:#ffffff;
+      --row:#f8fbff;
+      --success:#10703a;
+      --success-bg:#e8f7ef;
+      --danger:#b42334;
+      --danger-bg:#fff0f2;
+      --shadow:0 16px 38px rgba(15, 47, 110, 0.10);
+    }}
     body {{
-      font-family: 'Courier New', monospace;
-      max-width: 980px;
-      margin: 40px auto;
-      line-height: 1.6;
-      padding: 0 12px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      max-width: 1120px;
+      margin: 0 auto;
+      line-height: 1.5;
+      padding: 24px 14px 34px;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--blue-50), #fff 260px);
     }}
-    .topline {{
+    h1 {{ color: var(--blue-900); font-size: 26px; font-weight: 800; margin: 0 0 6px; }}
+    .subtitle {{ color: var(--muted); font-size: 14px; margin-bottom: 14px; }}
+    .criteria-toggle {{
       display: flex;
+      width: 100%;
+      align-items: center;
       justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
+      margin: 0 0 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--blue-900);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: left;
+      box-shadow: 0 10px 24px rgba(15, 47, 110, 0.07);
+      cursor: pointer;
     }}
-    .timestamp {{ font-size: 10px; }}
+    .criteria-toggle:hover {{
+      border-color: var(--blue-700);
+      background: var(--blue-50);
+    }}
+    .criteria-indicator {{
+      color: var(--blue-800);
+      font-size: 16px;
+      line-height: 1;
+    }}
+    .criteria {{
+      color: var(--text);
+      font-size: 13px;
+      margin: 0 0 18px;
+      line-height: 1.55;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 10px 24px rgba(15, 47, 110, 0.07);
+    }}
+    .section-header {{ color: var(--blue-800); font-weight: 800; margin-top: 10px; }}
 
-    h1 {{ font-size: 18px; font-weight: bold; margin: 0 0 5px; }}
-    .subtitle {{ font-size: 12px; margin-bottom: 15px; }}
-    .criteria {{ font-size: 11px; margin-bottom: 14px; line-height: 1.5; }}
-    .criteria-title {{ font-weight: bold; margin-bottom: 5px; }}
-    .section-header {{ font-weight: bold; margin-top: 10px; }}
+    .leaderboard {{ font-size: 14px; columns: 1; }}
+    .qb-entry {{
+      break-inside: avoid;
+      margin-bottom: 6px;
+      cursor: pointer;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 6px 18px rgba(15, 47, 110, 0.06);
+      transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }}
+    .qb-entry:hover {{
+      border-color: var(--blue-700);
+      background: var(--blue-50);
+      transform: translateY(-1px);
+    }}
 
-    .leaderboard {{ font-size: 12px; columns: 1; }}
-    .qb-entry {{ break-inside: avoid; margin-bottom: 3px; cursor: pointer; }}
-    .qb-entry:hover {{ text-decoration: underline; }}
-
-    .search-wrap {{ margin: 10px 0 18px; position: relative; max-width: 520px; }}
+    .search-wrap {{ margin: 10px 0 20px; position: relative; max-width: 560px; }}
     .search-row {{ display: flex; gap: 8px; align-items: center; }}
     input[type="text"] {{
       width: 100%;
-      padding: 8px 10px;
+      padding: 11px 12px;
       font-family: inherit;
-      font-size: 12px;
-      border: 1px solid #999;
-      border-radius: 6px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       outline: none;
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 6px 18px rgba(15, 47, 110, 0.06);
+    }}
+    input[type="text"]:focus {{
+      border-color: var(--blue-700);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.16);
     }}
     button {{
-      padding: 8px 10px;
+      padding: 11px 13px;
       font-family: inherit;
-      font-size: 12px;
-      border: 1px solid #999;
-      border-radius: 6px;
-      background: transparent;
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue-800);
       cursor: pointer;
       white-space: nowrap;
     }}
     button:disabled {{ opacity: 0.5; cursor: default; }}
-    .search-hint {{ font-size: 10px; margin-top: 6px; }}
+    .search-hint {{ color: var(--muted); font-size: 12px; margin-top: 7px; }}
     .dropdown {{
       position: absolute;
-      top: 38px;
+      top: 46px;
       left: 0;
       right: 0;
-      border: 1px solid #999;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       background: #fff;
       z-index: 50;
       max-height: 220px;
       overflow: auto;
       display: none;
+      box-shadow: var(--shadow);
     }}
     .dropdown button {{ width: 100%; text-align: left; border: 0; border-radius: 0; }}
-    .dropdown button:hover {{ background: #eee; }}
+    .dropdown button:hover {{ background: var(--blue-50); }}
 
     .qb-details {{
       display: none;
-      margin: 6px 0 10px;
-      padding: 10px;
-      border: 1px solid #999;
-      border-radius: 6px;
-      background: #fafafa;
+      margin: 8px 0 14px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
       break-inside: avoid;
       width: 100%;
       box-sizing: border-box;
       overflow-x: auto;
+      box-shadow: var(--shadow);
     }}
-    .qb-details table {{ width: 100%; min-width: 860px; font-size: 10px; border-collapse: collapse; }}
-    .qb-details th {{ text-align: left; padding: 4px; border-bottom: 1px solid #999; font-weight: bold; }}
-    .qb-details td {{ padding: 4px; border-bottom: 1px solid #ddd; }}
+    .qb-details table {{
+      width: 100%;
+      min-width: 980px;
+      font-size: 12px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }}
+    .qb-details th {{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--blue-900);
+      font-weight: 800;
+      color: #fff;
+      background: var(--blue-800);
+      white-space: nowrap;
+    }}
+    .qb-details td {{
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5edff;
+      vertical-align: top;
+      background: #fff;
+    }}
+    .qb-details tbody tr:nth-child(even) td {{ background: var(--row); }}
+    .qb-details tbody tr:hover td {{ background: #eef5ff; }}
+    .qb-details th:nth-child(11),
+    .qb-details td:nth-child(11) {{
+      min-width: 340px;
+      line-height: 1.45;
+    }}
+    .qb-details th:nth-child(13),
+    .qb-details td:nth-child(13) {{
+      min-width: 220px;
+      line-height: 1.45;
+    }}
     .qb-details tr:last-child td {{ border-bottom: none; }}
-    .result-w {{ color: #0a7c0a; font-weight: bold; }}
-    .result-l {{ color: #c41e3a; font-weight: bold; }}
+    .result-w {{
+      color: var(--success);
+      background: var(--success-bg) !important;
+      font-weight: 800;
+      text-align: center;
+    }}
+    .result-l {{
+      color: var(--danger);
+      background: var(--danger-bg) !important;
+      font-weight: 800;
+      text-align: center;
+    }}
+    @media (max-width: 680px) {{
+      body {{ padding: 16px 10px 28px; }}
+      h1 {{ font-size: 22px; }}
+      .search-row {{ align-items: stretch; flex-direction: column; }}
+      button {{ width: 100%; }}
+    }}
   </style>
 </head>
 <body>
-  <div class="topline">
-    <div>
-      <div style="font-size:12px; font-weight:bold;">{page_title}</div>
-      <div style="font-size:11px;">Seasons: 2000-{CURRENT_SEASON}</div>
-    </div>
-    <div class="timestamp">Generated: {generated_ts}</div>
-  </div>
 """
 
         html += _render_section(
@@ -607,6 +722,18 @@ def generate_leaderboards_html(
     const dropdown = document.getElementById("searchDropdown");
     const clearBtn = document.getElementById("clearSearch");
     const entries = Array.from(document.querySelectorAll(".qb-entry"));
+    const criteriaToggle = document.querySelector(".criteria-toggle");
+    const criteriaPanel = document.getElementById("criteria-panel");
+
+    if (criteriaToggle && criteriaPanel) {
+      criteriaToggle.addEventListener("click", () => {
+        const expanded = criteriaToggle.getAttribute("aria-expanded") === "true";
+        criteriaToggle.setAttribute("aria-expanded", String(!expanded));
+        criteriaPanel.hidden = expanded;
+        const indicator = criteriaToggle.querySelector(".criteria-indicator");
+        if (indicator) indicator.textContent = expanded ? "+" : "-";
+      });
+    }
 
     const players = entries.map(el => {
       const text = el.textContent.trim();
@@ -801,7 +928,7 @@ def generate_leaderboards_html(
     reg_html = _build_page(
         page_title="Regular Season Legacy Drives",
         section_title="Regular Season Legacy Drives",
-        subtitle=f"Seasons: 2000-{CURRENT_SEASON} | Sorted by Legacy Drive Successes",
+        subtitle=f"Seasons: 2000-{CURRENT_SEASON} | Sorted by Legacy Drive Successes | Generated: {generated_ts}",
         criteria_html=criteria_reg,
         placeholder="Search a QB (e.g., mahomes)",
         records=reg_records,
@@ -811,7 +938,7 @@ def generate_leaderboards_html(
     post_html = _build_page(
         page_title="Post Season Legacy Drives",
         section_title="Post Season Legacy Drives",
-        subtitle=f"Seasons: 2000-{CURRENT_SEASON} | Sorted by Legacy Drive Successes",
+        subtitle=f"Seasons: 2000-{CURRENT_SEASON} | Sorted by Legacy Drive Successes | Generated: {generated_ts}",
         criteria_html=criteria_post,
         placeholder="Search a QB (e.g., brady)",
         records=post_records,
@@ -909,50 +1036,89 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recent Legacy Drives (REG + POST)</title>
   <style>
+    html,
     body {{
-      font-family: 'Courier New', monospace;
-      max-width: 1200px;
-      margin: 40px auto;
-      line-height: 1.6;
-      padding: 0 12px;
+      height: 100%;
+    }}
+    body {{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      max-width: none;
+      margin: 0;
+      line-height: 1.5;
+      padding: 0;
+      color: #172033;
+      background: linear-gradient(180deg, #eff6ff, #fff 260px);
       -webkit-text-size-adjust: 100%;
+      overflow: hidden;
     }}
-    .timestamp {{ 
-        font-size: 10px;
-        text-align: right;
-    }}
-    h1 {{ 
-        font-size: 18px; font-weight: bold; margin: 0 0 5px; 
-    }}
-    .subtitle {{ 
-        font-size: 12px;
-        }}
-
     .wrap {{
-      border: 1px solid #999;
-      border-radius: 6px;
-      background: #fafafa;
-      padding: 10px;
-      overflow-x: auto;
+      height: 100vh;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background: #ffffff;
+      padding: 0;
+      overflow: auto;
       -webkit-text-size-adjust: none;
+      box-shadow: none;
     }}
-    table {{ width: 100%; min-width: 1100px; font-size: 10px; border-collapse: collapse; }}
-    th {{ text-align: left; padding: 4px; border-bottom: 1px solid #999; font-weight: bold; position: sticky; top: 0; background: #fafafa; }}
-    td {{ padding: 4px; border-bottom: 1px solid #ddd; vertical-align: top; }}
+    table {{
+      width: 100%;
+      min-width: 1180px;
+      font-size: 12px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }}
+    th {{
+      text-align: left;
+      padding: 11px 12px;
+      border-bottom: 1px solid #0f2f6e;
+      font-weight: 800;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      color: #fff;
+      background: #17438f;
+      white-space: nowrap;
+    }}
+    td {{
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5edff;
+      vertical-align: top;
+      background: #fff;
+    }}
+    tbody tr:nth-child(even) td {{ background: #f8fbff; }}
+    tbody tr:hover td {{ background: #eef5ff; }}
+    th:nth-child(12),
+    td:nth-child(12) {{
+      min-width: 360px;
+      line-height: 1.45;
+    }}
+    th:nth-child(14),
+    td:nth-child(14) {{
+      min-width: 220px;
+      line-height: 1.45;
+    }}
     tr:last-child td {{ border-bottom: none; }}
-    .result-w {{ color: #0a7c0a; font-weight: bold; }}
-    .result-l {{ color: #c41e3a; font-weight: bold; }}
+    .result-w {{
+      color: #10703a;
+      background: #e8f7ef !important;
+      font-weight: 800;
+      text-align: center;
+    }}
+    .result-l {{
+      color: #b42334;
+      background: #fff0f2 !important;
+      font-weight: 800;
+      text-align: center;
+    }}
+    @media (max-width: 680px) {{
+      body {{ padding: 16px 10px 28px; }}
+      h1 {{ font-size: 23px; }}
+    }}
   </style>
 </head>
 <body>
-  <div class="timestamp">
-    <div class="timestamp">Generated: {generated_ts}</div>
-  </div>
-
-  <h1>Recent Legacy Drives (REG + POST)</h1>
-  <div class="subtitle">Most recent first | Seasons: {min_season}-{CURRENT_SEASON}</div>
-  <div class="subtitle">Scroll down for older drives (last 5 seasons).</div>
-
   <div class="wrap">
     <table>
       <thead>
@@ -978,6 +1144,22 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       </tbody>
     </table>
   </div>
+  <script>
+  (function () {{
+    const tableScroller = document.querySelector(".wrap");
+
+    function publishScroll() {{
+      const scrollY = tableScroller ? tableScroller.scrollTop : (window.scrollY || 0);
+      window.parent.postMessage({{ type: "legacy-drive-recent-scroll", scrollY: scrollY }}, "*");
+    }}
+
+    if (tableScroller) {{
+      tableScroller.addEventListener("scroll", publishScroll, {{ passive: true }});
+    }}
+    window.addEventListener("load", publishScroll);
+    publishScroll();
+  }})();
+  </script>
 </body>
 </html>
 """
