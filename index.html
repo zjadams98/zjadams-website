@@ -40,42 +40,32 @@
     }
 
     .site-header {
-      padding: 36px 20px 28px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 16px 20px 0;
       color:#fff;
       background:
         linear-gradient(135deg, rgba(15, 47, 110, 0.98), rgba(29, 78, 216, 0.92) 58%, rgba(96, 165, 250, 0.86)),
         var(--blue-700);
-      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18), 0 14px 30px rgba(15, 47, 110, 0.12);
       transition: padding 180ms ease, box-shadow 180ms ease;
     }
 
     .site-title {
-      margin: 0;
-      font-size: clamp(34px, 5vw, 56px);
+      margin: 0 0 12px;
+      font-size: clamp(32px, 4.4vw, 50px);
       font-weight: 800;
       text-align: center;
       letter-spacing: 0;
-      transition: font-size 180ms ease;
+      transition: font-size 180ms ease, margin 180ms ease;
     }
 
-    .tagline {
-      max-width: 680px;
-      margin: 10px auto 0;
-      color: rgba(255, 255, 255, 0.86);
-      font-size: 16px;
-      line-height: 1.5;
-      text-align: center;
-      max-height: 48px;
-      overflow: hidden;
-      transition: opacity 180ms ease, max-height 180ms ease, margin 180ms ease;
+    .is-legacy-compact .site-header {
+      padding-top: 6px;
+      box-shadow: 0 4px 16px rgba(15, 47, 110, 0.22);
     }
 
-    .nav-shell {
-      padding: 0 16px;
-      background: rgba(248, 251, 255, 0.96);
-      border-bottom: 1px solid rgba(199, 210, 254, 0.85);
-      box-shadow: 0 12px 30px rgba(15, 47, 110, 0.08);
+    .is-legacy-compact .site-title {
+      margin-bottom: 6px;
+      font-size: 22px;
     }
 
     .nav-inner {
@@ -86,7 +76,11 @@
     .wrap {
       width:min(1180px, calc(100% - 32px));
       margin: 16px auto 32px;
-      min-height: calc(100vh + 180px);
+      min-height: 70vh;
+    }
+
+    .show-legacy-nav .wrap {
+      margin-bottom: 0;
     }
 
     .tabs {
@@ -96,39 +90,34 @@
       margin:0;
       padding:6px;
       justify-content: center;
-      border:1px solid rgba(199, 210, 254, 0.85);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .show-legacy-nav .tabs {
-      border-bottom-color: rgba(199, 210, 254, 0.75);
-      border-radius: var(--radius) var(--radius) 0 0;
+      border:0;
+      border-radius: 0;
+      background: transparent;
     }
 
     .tabbtn {
-      border:1px solid transparent;
-      background:var(--tab-bg);
+      border:1px solid rgba(255, 255, 255, 0.28);
+      background:rgba(255, 255, 255, 0.12);
       padding:7px 12px;
       border-radius:6px;
       cursor:pointer;
       font-size:13px;
       font-weight:700;
       line-height:1.15;
-      color:var(--text);
+      color:#fff;
       transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
     }
 
     .tabbtn:hover {
-      border-color:var(--border);
-      background:var(--blue-50);
+      border-color:rgba(255, 255, 255, 0.58);
+      background:rgba(255, 255, 255, 0.2);
       transform: translateY(-1px);
     }
 
     .tabbtn[aria-selected="true"] {
-      background:var(--tab-active);
-      color:var(--tab-active-text);
-      border-color:var(--tab-active);
+      background:#fff;
+      color:var(--blue-900);
+      border-color:#fff;
     }
 
     .panel { display:none; }
@@ -138,36 +127,31 @@
       display:none;
       flex-wrap: wrap;
       gap:6px;
-      margin: -1px 0 0;
+      margin: 0;
       justify-content: center;
       padding:5px;
-      border:1px solid rgba(199, 210, 254, 0.75);
-      border-radius: 0 0 var(--radius) var(--radius);
-      background:rgba(255, 255, 255, 0.78);
+      border:0;
+      border-radius: 0;
+      background: transparent;
     }
 
     .show-legacy-nav .subtabs {
       display:flex;
     }
 
-    .legacy-recent-active .subtabs {
-      border-radius: 0;
+    .recent-info {
+      position:sticky;
+      top:var(--site-chrome-height, 0px);
+      z-index:12;
+      padding: 14px 16px;
+      border:1px solid rgba(199, 210, 254, 0.9);
+      border-bottom:0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background:#fff;
+      box-shadow: 0 12px 28px rgba(15, 47, 110, 0.08);
     }
 
-    .legacy-context {
-      display:none;
-      margin: -1px 0 0;
-      padding: 9px 14px 10px;
-      border: 1px solid rgba(199, 210, 254, 0.75);
-      border-radius: 0 0 var(--radius) var(--radius);
-      background: rgba(255, 255, 255, 0.92);
-    }
-
-    .legacy-recent-active .legacy-context {
-      display:block;
-    }
-
-    .legacy-context h2 {
+    .recent-info h2 {
       margin:0 0 4px;
       color:var(--blue-900);
       font-size:18px;
@@ -175,111 +159,472 @@
       line-height:1.2;
     }
 
-    .legacy-context p {
+    .recent-info p {
       margin:0;
       color:var(--muted);
       font-size:12px;
       line-height:1.32;
     }
 
+    .recent-table-host {
+      border:1px solid rgba(199, 210, 254, 0.9);
+      border-top:0;
+      border-radius: 0 0 var(--radius) var(--radius);
+      background:#fff;
+      box-shadow: var(--shadow);
+      overflow:visible;
+    }
+
+    .recent-table-host table {
+      width:100%;
+      min-width:0;
+      table-layout:fixed;
+      font-size:12px;
+      border-collapse:separate;
+      border-spacing:0;
+    }
+
+    .recent-table-host th {
+      position:sticky;
+      top:calc(var(--site-chrome-height, 0px) + var(--recent-info-height, 0px));
+      z-index:11;
+      text-align:left;
+      padding:11px 12px;
+      border-bottom:1px solid var(--blue-900);
+      font-weight:800;
+      color:#fff;
+      background:var(--blue-800);
+      line-height:1.2;
+      white-space:normal;
+    }
+
+    .recent-table-host td {
+      padding:10px 12px;
+      border-bottom:1px solid #e5edff;
+      vertical-align:top;
+      background:#fff;
+      overflow-wrap:break-word;
+    }
+
+    .recent-table-host tbody tr:nth-child(even) td { background:#f8fbff; }
+    .recent-table-host tbody tr:hover td { background:#eef5ff; }
+
+    .recent-table-host th:nth-child(1),
+    .recent-table-host td:nth-child(1) { width:10%; }
+
+    .recent-table-host th:nth-child(2),
+    .recent-table-host td:nth-child(2) {
+      width:4%;
+      white-space:nowrap;
+    }
+
+    .recent-table-host th:nth-child(3),
+    .recent-table-host td:nth-child(3) {
+      width:4%;
+      white-space:nowrap;
+    }
+
+    .recent-table-host th:nth-child(4),
+    .recent-table-host td:nth-child(4) { width:3%; }
+
+    .recent-table-host th:nth-child(5),
+    .recent-table-host td:nth-child(5) { width:4.5%; }
+
+    .recent-table-host th:nth-child(6),
+    .recent-table-host td:nth-child(6) { width:4.5%; }
+
+    .recent-table-host th:nth-child(7),
+    .recent-table-host td:nth-child(7) { width:3.4%; }
+
+    .recent-table-host th:nth-child(8),
+    .recent-table-host td:nth-child(8) { width:4.7%; }
+
+    .recent-table-host th:nth-child(9),
+    .recent-table-host td:nth-child(9) { width:9.5%; }
+
+    .recent-table-host th:nth-child(10),
+    .recent-table-host td:nth-child(10) {
+      width:5.4%;
+      white-space:nowrap;
+    }
+
+    .recent-table-host th:nth-child(11),
+    .recent-table-host td:nth-child(11) { width:9%; }
+
+    .recent-table-host th:nth-child(12),
+    .recent-table-host td:nth-child(12) {
+      width:25.5%;
+      line-height:1.45;
+    }
+
+    .recent-table-host th:nth-child(13),
+    .recent-table-host td:nth-child(13) { width:4%; }
+
+    .recent-table-host th:nth-child(14),
+    .recent-table-host td:nth-child(14) {
+      width:8.5%;
+      line-height:1.45;
+    }
+
+    .recent-table-host tr:last-child td { border-bottom:none; }
+
+    .recent-table-host .result-w {
+      color:#10703a;
+      background:#e8f7ef !important;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .recent-table-host .result-l {
+      color:#b42334;
+      background:#fff0f2 !important;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .recent-loading {
+      padding:18px 16px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .recent-source-frame,
+    .leaderboard-source-frame {
+      position:absolute;
+      width:0;
+      height:0;
+      border:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .leaderboard-host .leaderboard-toolbar {
+      position:sticky;
+      top:var(--site-chrome-height, 0px);
+      z-index:12;
+      padding:0 0 14px;
+      background:linear-gradient(180deg, rgba(248, 251, 255, 0.98) 0, rgba(255, 255, 255, 0.98) 100%);
+      border-bottom:1px solid rgba(199, 210, 254, 0.72);
+      box-shadow:0 12px 28px rgba(15, 47, 110, 0.08);
+    }
+
+    .leaderboard-host .leaderboard-info {
+      padding:14px 16px;
+      border:1px solid rgba(199, 210, 254, 0.9);
+      border-bottom:0;
+      border-radius:var(--radius) var(--radius) 0 0;
+      background:#fff;
+    }
+
+    .leaderboard-host h1 {
+      margin:0 0 4px;
+      color:var(--blue-900);
+      font-size:18px;
+      font-weight:800;
+      line-height:1.2;
+    }
+
+    .leaderboard-host .subtitle {
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.32;
+    }
+
+    .leaderboard-host .leaderboard-controls {
+      padding:12px 16px 14px;
+      border:1px solid rgba(199, 210, 254, 0.9);
+      border-radius:0 0 var(--radius) var(--radius);
+      background:#fff;
+    }
+
+    .leaderboard-host .criteria-toggle {
+      display:flex;
+      width:100%;
+      align-items:center;
+      justify-content:space-between;
+      margin:0 0 10px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      color:var(--blue-900);
+      font:inherit;
+      font-size:14px;
+      font-weight:800;
+      text-align:left;
+      box-shadow:0 10px 24px rgba(15, 47, 110, 0.07);
+      cursor:pointer;
+    }
+
+    .leaderboard-host .criteria-toggle:hover {
+      border-color:var(--blue-700);
+      background:var(--blue-50);
+    }
+
+    .leaderboard-host .criteria-indicator {
+      color:var(--blue-800);
+      font-size:16px;
+      line-height:1;
+    }
+
+    .leaderboard-host .criteria {
+      margin:0 0 12px;
+      padding:14px 16px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      color:var(--text);
+      background:#fff;
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .leaderboard-host .section-header {
+      margin-top:10px;
+      color:var(--blue-800);
+      font-weight:800;
+    }
+
+    .leaderboard-host .search-wrap {
+      position:relative;
+      max-width:560px;
+      margin:0;
+    }
+
+    .leaderboard-host .search-row {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .leaderboard-host input[type="text"] {
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      outline:none;
+      background:#fff;
+      color:var(--text);
+      font:inherit;
+      font-size:14px;
+      box-shadow:0 6px 18px rgba(15, 47, 110, 0.06);
+    }
+
+    .leaderboard-host input[type="text"]:focus {
+      border-color:var(--blue-700);
+      box-shadow:0 0 0 3px rgba(29, 78, 216, 0.16);
+    }
+
+    .leaderboard-host button {
+      padding:11px 13px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      color:var(--blue-800);
+      font:inherit;
+      font-size:14px;
+      font-weight:700;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+
+    .leaderboard-host button:disabled {
+      opacity:0.5;
+      cursor:default;
+    }
+
+    .leaderboard-host .search-hint {
+      margin-top:7px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .leaderboard-host .dropdown {
+      position:absolute;
+      top:46px;
+      left:0;
+      right:0;
+      z-index:50;
+      display:none;
+      max-height:220px;
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .leaderboard-host .dropdown button {
+      width:100%;
+      border:0;
+      border-radius:0;
+      text-align:left;
+    }
+
+    .leaderboard-host .dropdown button:hover {
+      background:var(--blue-50);
+    }
+
+    .leaderboard-host .leaderboard {
+      margin-top:14px;
+      border:1px solid rgba(199, 210, 254, 0.9);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+      overflow:visible;
+      font-size:14px;
+    }
+
+    .leaderboard-host .qb-entry {
+      margin:0;
+      padding:11px 14px;
+      border-bottom:1px solid #e5edff;
+      background:#fff;
+      color:var(--text);
+      font-weight:700;
+      cursor:pointer;
+      transition:background-color 160ms ease, color 160ms ease;
+    }
+
+    .leaderboard-host .qb-entry:hover,
+    .leaderboard-host .qb-entry.is-open {
+      background:var(--blue-50);
+      color:var(--blue-900);
+    }
+
+    .leaderboard-host .qb-entry.is-open {
+      position:sticky;
+      top:calc(var(--site-chrome-height, 0px) + var(--leaderboard-toolbar-height, 0px));
+      z-index:12;
+      box-shadow:0 10px 22px rgba(15, 47, 110, 0.12);
+    }
+
+    .leaderboard-host .qb-details {
+      display:none;
+      margin:0;
+      padding:0;
+      border-bottom:1px solid #e5edff;
+      background:#fff;
+    }
+
+    .leaderboard-host .qb-details table {
+      width:100%;
+      min-width:0;
+      table-layout:fixed;
+      border-collapse:separate;
+      border-spacing:0;
+      font-size:12px;
+    }
+
+    .leaderboard-host .qb-details th {
+      position:sticky;
+      top:calc(var(--site-chrome-height, 0px) + var(--leaderboard-toolbar-height, 0px) + var(--leaderboard-open-entry-height, 0px));
+      z-index:11;
+      padding:10px 9px;
+      border-bottom:1px solid var(--blue-900);
+      color:#fff;
+      background:var(--blue-800);
+      font-weight:800;
+      line-height:1.2;
+      text-align:left;
+      white-space:normal;
+    }
+
+    .leaderboard-host .qb-details td {
+      padding:9px;
+      border-bottom:1px solid #e5edff;
+      background:#fff;
+      line-height:1.35;
+      vertical-align:top;
+      overflow-wrap:break-word;
+    }
+
+    .leaderboard-host .qb-details tbody tr:nth-child(even) td { background:#f8fbff; }
+    .leaderboard-host .qb-details tbody tr:hover td { background:#eef5ff; }
+    .leaderboard-host .qb-details tr:last-child td { border-bottom:0; }
+
+    .leaderboard-host .qb-details th:nth-child(1),
+    .leaderboard-host .qb-details td:nth-child(1) { width:5%; }
+    .leaderboard-host .qb-details th:nth-child(2),
+    .leaderboard-host .qb-details td:nth-child(2) { width:5%; }
+    .leaderboard-host .qb-details th:nth-child(3),
+    .leaderboard-host .qb-details td:nth-child(3) { width:5%; }
+    .leaderboard-host .qb-details th:nth-child(4),
+    .leaderboard-host .qb-details td:nth-child(4) { width:6%; }
+    .leaderboard-host .qb-details th:nth-child(5),
+    .leaderboard-host .qb-details td:nth-child(5) { width:6%; }
+    .leaderboard-host .qb-details th:nth-child(6),
+    .leaderboard-host .qb-details td:nth-child(6) { width:5%; }
+    .leaderboard-host .qb-details th:nth-child(7),
+    .leaderboard-host .qb-details td:nth-child(7) { width:7%; }
+    .leaderboard-host .qb-details th:nth-child(8),
+    .leaderboard-host .qb-details td:nth-child(8) { width:7%; }
+    .leaderboard-host .qb-details th:nth-child(9),
+    .leaderboard-host .qb-details td:nth-child(9) { width:6%; }
+    .leaderboard-host .qb-details th:nth-child(10),
+    .leaderboard-host .qb-details td:nth-child(10) { width:7%; }
+    .leaderboard-host .qb-details th:nth-child(11),
+    .leaderboard-host .qb-details td:nth-child(11) { width:25%; }
+    .leaderboard-host .qb-details th:nth-child(12),
+    .leaderboard-host .qb-details td:nth-child(12) { width:6%; }
+    .leaderboard-host .qb-details th:nth-child(13),
+    .leaderboard-host .qb-details td:nth-child(13) { width:15%; }
+
+    .leaderboard-host .result-w {
+      color:#10703a;
+      background:#e8f7ef !important;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .leaderboard-host .result-l {
+      color:#b42334;
+      background:#fff0f2 !important;
+      font-weight:800;
+      text-align:center;
+    }
+
     .subtabbtn {
-      border:1px solid transparent;
-      background:var(--tab-bg);
+      border:1px solid rgba(255, 255, 255, 0.24);
+      background:rgba(255, 255, 255, 0.1);
       padding:6px 10px;
       border-radius:6px;
       cursor:pointer;
       font-size:13px;
       font-weight:700;
       line-height:1.15;
-      color:var(--text);
+      color:#fff;
       transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
     }
 
     .subtabbtn:hover {
-      border-color:var(--border);
-      background:var(--blue-50);
+      border-color:rgba(255, 255, 255, 0.58);
+      background:rgba(255, 255, 255, 0.2);
     }
 
     .subtabbtn[aria-selected="true"] {
-      background:var(--tab-active);
-      color:var(--tab-active-text);
-      border-color:var(--tab-active);
-    }
-
-    .frame {
-      width:100%;
-      height: calc(100vh + 120px);
-      min-height: 820px;
-      border:1px solid rgba(199, 210, 254, 0.9);
-      border-radius:var(--radius);
       background:#fff;
-      box-shadow: var(--shadow);
-      transition: height 180ms ease, min-height 180ms ease;
-    }
-
-    .legacy-recent-active .wrap {
-      margin:0 auto;
-      min-height:auto;
-    }
-
-    .recent-frame {
-      display:block;
-      height: calc(100vh - 365px);
-      min-height: 360px;
-      border-top:0;
-      border-radius: 0 0 var(--radius) var(--radius);
-    }
-
-    .is-scrolled .site-header {
-      padding: 8px 20px 7px;
-      box-shadow: 0 4px 16px rgba(15, 47, 110, 0.22);
-    }
-
-    .is-scrolled .site-title {
-      font-size: 22px;
-    }
-
-    .is-scrolled .tagline {
-      margin-top: 0;
-      max-height: 0;
-      opacity: 0;
-    }
-
-    .is-scrolled .frame {
-      height: calc(100vh + 220px);
-      min-height: 900px;
-    }
-
-    .is-scrolled .recent-frame {
-      height: calc(100vh - 217px);
-      min-height: 460px;
+      color:var(--blue-900);
+      border-color:#fff;
     }
 
     @media (max-width: 640px) {
-      .site-header { padding-top: 30px; }
+      .site-header { padding-top: 14px; }
+      .site-title { margin-bottom: 10px; }
+      .is-legacy-compact .site-header { padding-top: 6px; }
+      .is-legacy-compact .site-title { margin-bottom: 5px; font-size: 20px; }
 
-      .frame {
-        height: calc(100vh + 80px);
-        min-height: 680px;
+      .leaderboard-host .search-row {
+        align-items:stretch;
+        flex-direction:column;
       }
 
-      .recent-frame {
-        height: calc(100vh - 318px);
-        min-height: 320px;
+      .leaderboard-host button {
+        width:100%;
       }
 
-      .is-scrolled .frame {
-        height: calc(100vh + 140px);
-        min-height: 760px;
-      }
-
-      .is-scrolled .recent-frame {
-        height: calc(100vh - 226px);
-        min-height: 400px;
-      }
     }
 
-    footer { padding:14px 20px 22px; color:var(--muted); font-size:12px; }
     a { color: inherit; }
   </style>
 </head>
@@ -287,10 +632,7 @@
   <div class="site-chrome">
     <header class="site-header">
       <h1 class="site-title">Zach's Website</h1>
-      <p class="tagline">A clean home for projects, experiments, and the Legacy Drives tracker.</p>
-    </header>
 
-    <div class="nav-shell">
       <div class="nav-inner">
         <div class="tabs" role="tablist" aria-label="Site Sections">
           <button class="tabbtn" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">
@@ -312,28 +654,36 @@
             Post Season
           </button>
         </div>
-
-        <div class="legacy-context" id="legacy-recent-info">
-          <h2>Recent Legacy Drives (REG + POST)</h2>
-          <p>Most recent first | Seasons: 2021-2025 | Generated: 2026-06-15 17:13</p>
-          <p>Scroll down for older drives (last 5 seasons).</p>
-        </div>
       </div>
-    </div>
+    </header>
   </div>
 
   <div class="wrap">
     <section id="panel-home" class="panel active" role="tabpanel" aria-labelledby="tab-home"></section>
     <section id="panel-legacy-drives" class="panel" role="tabpanel" aria-labelledby="tab-legacy-drives">
       <section id="subpanel-LD-recent" class="panel active" role="tabpanel" aria-labelledby="subtab-LD-recent">
-        <iframe class="frame recent-frame" src="legacy-drive/recent_legacy_drives.html" title="Recent Legacy Drives"></iframe>
+        <div class="recent-info">
+          <h2>Recent Legacy Drives (REG + POST)</h2>
+          <p>Most recent first | Seasons: 2021-2025 | Generated: 2026-06-15 17:13</p>
+          <p>Scroll down for older drives (last 5 seasons).</p>
+        </div>
+        <div class="recent-table-host" id="recentTableHost">
+          <div class="recent-loading">Loading recent drives...</div>
+        </div>
+        <iframe class="recent-source-frame" src="legacy-drive/recent_legacy_drives.html" title="Recent Legacy Drives source" aria-hidden="true" tabindex="-1"></iframe>
       </section>
       <section id="subpanel-LD-regular" class="panel" role="tabpanel" aria-labelledby="subtab-LD-regular">
-        <iframe class="frame" src="legacy-drive/regular_season_legacy_drives_leaderboard.html" title="Regular Season Leaderboard"></iframe>
+        <div class="leaderboard-host" id="regularLeaderboardHost">
+          <div class="recent-loading">Loading regular season leaderboard...</div>
+        </div>
+        <iframe class="leaderboard-source-frame" data-leaderboard-source="regular" src="legacy-drive/regular_season_legacy_drives_leaderboard.html" title="Regular Season Leaderboard source" aria-hidden="true" tabindex="-1"></iframe>
       </section>
 
       <section id="subpanel-LD-post" class="panel" role="tabpanel" aria-labelledby="subtab-LD-post">
-        <iframe class="frame" src="legacy-drive/post_season_legacy_drives_leaderboard.html" title="Postseason Leaderboard"></iframe>
+        <div class="leaderboard-host" id="postLeaderboardHost">
+          <div class="recent-loading">Loading postseason leaderboard...</div>
+        </div>
+        <iframe class="leaderboard-source-frame" data-leaderboard-source="post" src="legacy-drive/post_season_legacy_drives_leaderboard.html" title="Postseason Leaderboard source" aria-hidden="true" tabindex="-1"></iframe>
       </section>
     </section>
 
@@ -350,10 +700,37 @@
       { btn: document.getElementById('subtab-LD-regular'), panel: document.getElementById('subpanel-LD-regular') },
       { btn: document.getElementById('subtab-LD-post'), panel: document.getElementById('subpanel-LD-post') },
     ];
-    const recentFrame = document.querySelector('.recent-frame');
-    let activeMainIndex = 0;
-    let activeLegacyIndex = 0;
-    let recentFrameScrolled = false;
+    const siteChrome = document.querySelector('.site-chrome');
+    const recentInfo = document.querySelector('.recent-info');
+    const recentSourceFrame = document.querySelector('.recent-source-frame');
+    const recentTableHost = document.getElementById('recentTableHost');
+    const leaderboardSources = {
+      regular: {
+        frame: document.querySelector('.leaderboard-source-frame[data-leaderboard-source="regular"]'),
+        host: document.getElementById('regularLeaderboardHost'),
+        data: [],
+      },
+      post: {
+        frame: document.querySelector('.leaderboard-source-frame[data-leaderboard-source="post"]'),
+        host: document.getElementById('postLeaderboardHost'),
+        data: [],
+      },
+    };
+
+    function updateStickyOffsets() {
+      const activeLegacyPanel = document.querySelector('#panel-legacy-drives > .panel.active');
+      const leaderboardToolbar = activeLegacyPanel?.querySelector('.leaderboard-toolbar');
+      const openLeaderboardEntry = activeLegacyPanel?.querySelector('.qb-entry.is-open');
+      document.documentElement.style.setProperty('--site-chrome-height', `${siteChrome?.offsetHeight || 0}px`);
+      document.documentElement.style.setProperty('--recent-info-height', `${recentInfo?.offsetHeight || 0}px`);
+      document.documentElement.style.setProperty('--leaderboard-toolbar-height', `${leaderboardToolbar?.offsetHeight || 0}px`);
+      document.documentElement.style.setProperty('--leaderboard-open-entry-height', `${openLeaderboardEntry?.offsetHeight || 0}px`);
+    }
+
+    function scheduleStickyOffsets() {
+      requestAnimationFrame(updateStickyOffsets);
+      setTimeout(updateStickyOffsets, 220);
+    }
 
     function activate(tabs, index) {
       tabs.forEach((t, i) => {
@@ -363,40 +740,17 @@
       });
     }
 
-    function syncLegacyChrome() {
-      const legacyShown = activeMainIndex === 1;
-      document.body.classList.toggle('show-legacy-nav', legacyShown);
-      document.body.classList.toggle('legacy-recent-active', legacyShown && activeLegacyIndex === 0);
-      updateChromeState();
-    }
-
     function activateMain(index) {
-      activeMainIndex = index;
+      const legacySelected = index === 1;
       activate(mainTabs, index);
-      syncLegacyChrome();
+      document.body.classList.toggle('show-legacy-nav', legacySelected);
+      document.body.classList.toggle('is-legacy-compact', legacySelected);
+      scheduleStickyOffsets();
     }
 
     function activateLegacy(index) {
-      activeLegacyIndex = index;
       activate(legacyTabs, index);
-      syncLegacyChrome();
-    }
-
-    function recentFrameScrollY() {
-      if (!recentFrame || !document.body.classList.contains('legacy-recent-active')) return 0;
-      if (recentFrameScrolled) return 17;
-
-      try {
-        const win = recentFrame.contentWindow;
-        const doc = recentFrame.contentDocument;
-        return win?.scrollY || doc?.documentElement?.scrollTop || doc?.body?.scrollTop || 0;
-      } catch (error) {
-        return 0;
-      }
-    }
-
-    function updateChromeState() {
-      document.body.classList.toggle('is-scrolled', window.scrollY > 16 || recentFrameScrollY() > 16);
+      scheduleStickyOffsets();
     }
 
     mainTabs[0].btn.addEventListener('click', () => activateMain(0));
@@ -405,21 +759,350 @@
     legacyTabs[1].btn.addEventListener('click', () => activateLegacy(1));
     legacyTabs[2].btn.addEventListener('click', () => activateLegacy(2));
 
-    if (recentFrame) {
-      recentFrame.addEventListener('load', () => {
-        try {
-          recentFrame.contentWindow.addEventListener('scroll', updateChromeState, { passive: true });
-        } catch (error) {
-          // Same-origin access is available for the local static site; ignore if a browser blocks it.
-        }
+    function normalize(s) {
+      return (s || '').toString().trim().toLowerCase();
+    }
+
+    function escapeHtml(value) {
+      return (value ?? '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatScoreDiff(value) {
+      const text = (value ?? '').toString().trim();
+      if (!text) return '';
+      if (/^tied$/i.test(text)) return 'Tied';
+
+      const match = text.match(/^(?:down\s*)?(-?\d+)$/i);
+      if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
+
+      const diff = Math.abs(Number(match[1]));
+      return diff === 0 ? 'Tied' : `Down ${diff}`;
+    }
+
+    function formatDownText(value) {
+      const text = (value ?? '').toString().trim();
+      if (!text) return '';
+
+      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\s*down)?$/i);
+      if (!match) return text;
+
+      const down = Number(match[1]);
+      const suffixes = { 1: 'st', 2: 'nd', 3: 'rd', 4: 'th' };
+      return `${down}${suffixes[down]} Down`;
+    }
+
+    function normalizeLegacyDriveTable(table) {
+      if (!table) return;
+
+      table.querySelectorAll('tbody tr').forEach((row) => {
+        const cells = row.children;
+        if (cells[7]) cells[7].textContent = formatScoreDiff(cells[7].textContent);
+        if (cells[9]) cells[9].textContent = formatDownText(cells[9].textContent);
       });
     }
 
+    function namespaceLeaderboardMarkup(host, sourceKey) {
+      [
+        'criteria-panel',
+        'playerSearch',
+        'clearSearch',
+        'searchDropdown',
+        'leaderboard',
+      ].forEach((id) => {
+        const element = host.querySelector(`[id="${id}"]`);
+        if (!element) return;
+        const nextId = `${sourceKey}-${id}`;
+        element.id = nextId;
+        host.querySelectorAll(`[aria-controls="${id}"]`).forEach((control) => {
+          control.setAttribute('aria-controls', nextId);
+        });
+      });
+
+      host.querySelectorAll('.qb-details[id]').forEach((element) => {
+        element.id = `${sourceKey}-${element.id}`;
+      });
+    }
+
+    function compareDriveRows(a, b) {
+      const aSeason = Number(a.season || 0);
+      const bSeason = Number(b.season || 0);
+      if (aSeason !== bSeason) return bSeason - aSeason;
+
+      const aWeek = Number(a.week || 0);
+      const bWeek = Number(b.week || 0);
+      if (aWeek !== bWeek) return bWeek - aWeek;
+
+      const aGame = String(a.game_id || '');
+      const bGame = String(b.game_id || '');
+      if (aGame !== bGame) return bGame.localeCompare(aGame);
+
+      const periodOrder = (p) => (p === 'Q4' ? 4 : (p === 'OT' ? 5 : 99));
+      const aPeriod = periodOrder(a.period);
+      const bPeriod = periodOrder(b.period);
+      if (aPeriod !== bPeriod) return bPeriod - aPeriod;
+
+      const toSeconds = (time) => {
+        if (!time) return -1;
+        const parts = String(time).split(':');
+        if (parts.length !== 2) return -1;
+        const minutes = Number(parts[0]);
+        const seconds = Number(parts[1]);
+        if (Number.isNaN(minutes) || Number.isNaN(seconds)) return -1;
+        return minutes * 60 + seconds;
+      };
+
+      return toSeconds(a.start_time) - toSeconds(b.start_time);
+    }
+
+    function renderDriveTable(rows) {
+      if (!rows.length) return '<p class="recent-loading">No drives found for this QB.</p>';
+
+      const bodyRows = rows.map((drive) => {
+        const resultClass = drive.result === 'W' ? 'result-w' : (drive.result === 'L' ? 'result-l' : '');
+        const timeRange = (drive.start_time && drive.end_time)
+          ? `${drive.start_time}-${drive.end_time}`
+          : (drive.start_time || drive.end_time || '');
+        const finalScore = `${drive.end_team_score ?? ''}-${drive.end_opp_score ?? ''}`;
+        const week = drive.week_label || drive.week || '';
+
+        return `
+          <tr>
+            <td class="${resultClass}">${escapeHtml(drive.result || '')}</td>
+            <td>${escapeHtml(drive.season || '')}</td>
+            <td>${escapeHtml(week)}</td>
+            <td>${escapeHtml(drive.away_team || '')}</td>
+            <td>${escapeHtml(drive.home_team || '')}</td>
+            <td>${escapeHtml(drive.period || '')}</td>
+            <td>${escapeHtml(formatScoreDiff(drive.start_score_diff))}</td>
+            <td>${escapeHtml(timeRange)}</td>
+            <td>${escapeHtml(formatDownText(drive.final_down))}</td>
+            <td>${escapeHtml(drive.final_yds || drive.final_ydstogo || '')}</td>
+            <td>${escapeHtml(drive.final_play || '')}</td>
+            <td>${escapeHtml(finalScore)}</td>
+            <td>${escapeHtml(drive.reason || '')}</td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th>Result</th>
+              <th>Year</th>
+              <th>Week</th>
+              <th>Away Team</th>
+              <th>Home Team</th>
+              <th>Period</th>
+              <th>Score Diff</th>
+              <th>Time Range</th>
+              <th>Down</th>
+              <th>Yards To Go</th>
+              <th>Final Play of Drive</th>
+              <th>New Score</th>
+              <th>Result Explanation</th>
+            </tr>
+          </thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      `;
+    }
+
+    function setupLeaderboardHost(sourceKey) {
+      const state = leaderboardSources[sourceKey];
+      const host = state?.host;
+      if (!host) return;
+
+      const input = host.querySelector('input[type="text"]');
+      const dropdown = host.querySelector('.dropdown');
+      const clearBtn = host.querySelector('button[id$="clearSearch"]');
+      const criteriaToggle = host.querySelector('.criteria-toggle');
+      const criteriaPanel = host.querySelector('.criteria');
+      const entries = Array.from(host.querySelectorAll('.qb-entry'));
+      const players = entries.map((entry) => {
+        const text = entry.textContent.trim();
+        return { name: entry.dataset.qb || (text.split(':')[0] || '').trim(), entry };
+      });
+
+      function hideAllDetails() {
+        host.querySelectorAll('.qb-details').forEach((details) => {
+          details.style.display = 'none';
+        });
+        entries.forEach((entry) => entry.classList.remove('is-open'));
+      }
+
+      function showAll() {
+        players.forEach((player) => {
+          player.entry.style.display = '';
+        });
+        hideAllDetails();
+        if (clearBtn) clearBtn.disabled = true;
+        scheduleStickyOffsets();
+      }
+
+      function showOnly(name) {
+        const target = normalize(name);
+        players.forEach((player) => {
+          player.entry.style.display = normalize(player.name) === target ? '' : 'none';
+        });
+        hideAllDetails();
+        if (clearBtn) clearBtn.disabled = false;
+        scheduleStickyOffsets();
+      }
+
+      if (criteriaToggle && criteriaPanel) {
+        criteriaToggle.addEventListener('click', () => {
+          const expanded = criteriaToggle.getAttribute('aria-expanded') === 'true';
+          criteriaToggle.setAttribute('aria-expanded', String(!expanded));
+          criteriaPanel.hidden = expanded;
+          const indicator = criteriaToggle.querySelector('.criteria-indicator');
+          if (indicator) indicator.textContent = expanded ? '+' : '-';
+          scheduleStickyOffsets();
+        });
+      }
+
+      if (input && dropdown) {
+        input.addEventListener('input', () => {
+          const value = normalize(input.value);
+          dropdown.innerHTML = '';
+
+          if (!value) {
+            showAll();
+            dropdown.style.display = 'none';
+            return;
+          }
+
+          const matches = players.filter((player) => normalize(player.name).includes(value));
+          matches.forEach((player) => {
+            const button = document.createElement('button');
+            button.textContent = player.name;
+            button.type = 'button';
+            button.addEventListener('click', () => {
+              input.value = player.name;
+              showOnly(player.name);
+              dropdown.style.display = 'none';
+            });
+            dropdown.appendChild(button);
+          });
+
+          dropdown.style.display = matches.length ? 'block' : 'none';
+        });
+      }
+
+      if (clearBtn && input && dropdown) {
+        clearBtn.addEventListener('click', () => {
+          input.value = '';
+          showAll();
+          dropdown.style.display = 'none';
+        });
+      }
+
+      entries.forEach((entry) => {
+        entry.addEventListener('click', () => {
+          const qbName = entry.getAttribute('data-qb') || '';
+          const details = entry.nextElementSibling?.classList.contains('qb-details')
+            ? entry.nextElementSibling
+            : null;
+          if (!details) return;
+
+          const wasOpen = details.style.display === 'block';
+          hideAllDetails();
+          if (wasOpen) {
+            scheduleStickyOffsets();
+            return;
+          }
+
+          entry.classList.add('is-open');
+          details.style.display = 'block';
+
+          const qbRows = (state.data || [])
+            .filter((row) => normalize(row.qb_name) === normalize(qbName))
+            .sort(compareDriveRows);
+
+          details.innerHTML = renderDriveTable(qbRows);
+          scheduleStickyOffsets();
+        });
+      });
+
+      showAll();
+    }
+
+    function renderLeaderboardSource(sourceKey, html, data) {
+      const state = leaderboardSources[sourceKey];
+      if (!state?.host || typeof html !== 'string') return;
+
+      state.host.innerHTML = html;
+      state.data = Array.isArray(data) ? data : [];
+      namespaceLeaderboardMarkup(state.host, sourceKey);
+      setupLeaderboardHost(sourceKey);
+      scheduleStickyOffsets();
+    }
+
+    function readLeaderboardSourceFrame(sourceKey) {
+      const state = leaderboardSources[sourceKey];
+      const frame = state?.frame;
+      if (!frame) return;
+
+      try {
+        const doc = frame.contentDocument;
+        const toolbar = doc?.querySelector('.leaderboard-toolbar');
+        const leaderboard = doc?.querySelector('.leaderboard');
+        if (!toolbar || !leaderboard) return;
+        renderLeaderboardSource(
+          sourceKey,
+          `${toolbar.outerHTML}${leaderboard.outerHTML}`,
+          frame.contentWindow?.__LD_DATA__ || []
+        );
+      } catch (error) {
+        // The local static site is same-origin; this fallback is ignored if a browser blocks it.
+      }
+    }
+
     window.addEventListener('message', (event) => {
-      if (!event.data || event.data.type !== 'legacy-drive-recent-scroll') return;
-      recentFrameScrolled = Number(event.data.scrollY || 0) > 16;
-      updateChromeState();
+      if (!event.data) return;
+
+      if (event.data.type === 'legacy-drive-recent-table') {
+        if (recentSourceFrame && event.source !== recentSourceFrame.contentWindow) return;
+        if (!recentTableHost || typeof event.data.tableHtml !== 'string') return;
+
+        const template = document.createElement('template');
+        template.innerHTML = event.data.tableHtml.trim();
+        const table = template.content.querySelector('table');
+
+        if (table) {
+          normalizeLegacyDriveTable(table);
+          recentTableHost.replaceChildren(table);
+        } else {
+          recentTableHost.innerHTML = event.data.tableHtml;
+        }
+        scheduleStickyOffsets();
+        return;
+      }
+
+      if (event.data.type === 'legacy-drive-leaderboard-source') {
+        const sourceKey = event.data.source;
+        const state = leaderboardSources[sourceKey];
+        if (!state) return;
+        if (state.frame && event.source !== state.frame.contentWindow) return;
+        renderLeaderboardSource(sourceKey, event.data.html, event.data.data);
+      }
     });
+
+    Object.keys(leaderboardSources).forEach((sourceKey) => {
+      leaderboardSources[sourceKey].frame?.addEventListener('load', () => {
+        readLeaderboardSourceFrame(sourceKey);
+      });
+    });
+
+    if ('ResizeObserver' in window) {
+      if (siteChrome) new ResizeObserver(scheduleStickyOffsets).observe(siteChrome);
+      if (recentInfo) new ResizeObserver(scheduleStickyOffsets).observe(recentInfo);
+    }
 
     function applyHash() {
       const h = (location.hash || '').toLowerCase();
@@ -436,9 +1119,9 @@
     }
 
     window.addEventListener('hashchange', applyHash);
-    window.addEventListener('scroll', updateChromeState, { passive: true });
+    window.addEventListener('resize', scheduleStickyOffsets);
     applyHash();
-    updateChromeState();
+    scheduleStickyOffsets();
   </script>
 </body>
 </html>

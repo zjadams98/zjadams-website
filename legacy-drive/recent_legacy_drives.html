@@ -7,7 +7,7 @@
   <style>
     html,
     body {
-      height: 100%;
+      min-height: 100%;
     }
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -18,16 +18,15 @@
       color: #172033;
       background: linear-gradient(180deg, #eff6ff, #fff 260px);
       -webkit-text-size-adjust: 100%;
-      overflow: hidden;
+      overflow: visible;
     }
     .wrap {
-      height: 100vh;
       margin: 0;
       border: 0;
       border-radius: 0;
       background: #ffffff;
       padding: 0;
-      overflow: auto;
+      overflow: visible;
       -webkit-text-size-adjust: none;
       box-shadow: none;
     }
@@ -82,7 +81,7 @@
       text-align: center;
     }
     @media (max-width: 680px) {
-      body { padding: 16px 10px 28px; }
+      body { padding: 0; }
       h1 { font-size: 23px; }
     }
   </style>
@@ -115,18 +114,49 @@
   </div>
   <script>
   (function () {
-    const tableScroller = document.querySelector(".wrap");
+    function formatScoreDiff(value) {
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+      if (/^tied$/i.test(text)) return "Tied";
 
-    function publishScroll() {
-      const scrollY = tableScroller ? tableScroller.scrollTop : (window.scrollY || 0);
-      window.parent.postMessage({ type: "legacy-drive-recent-scroll", scrollY }, "*");
+      const match = text.match(/^(?:down\s*)?(-?\d+)$/i);
+      if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
+
+      const diff = Math.abs(Number(match[1]));
+      return diff === 0 ? "Tied" : `Down ${diff}`;
     }
 
-    if (tableScroller) {
-      tableScroller.addEventListener("scroll", publishScroll, { passive: true });
+    function formatDownText(value) {
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+
+      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\s*down)?$/i);
+      if (!match) return text;
+
+      const down = Number(match[1]);
+      const suffixes = { 1: "st", 2: "nd", 3: "rd", 4: "th" };
+      return `${down}${suffixes[down]} Down`;
     }
-    window.addEventListener("load", publishScroll);
-    publishScroll();
+
+    function normalizeTable(table) {
+      table.querySelectorAll("tbody tr").forEach(row => {
+        const cells = row.children;
+        if (cells[7]) cells[7].textContent = formatScoreDiff(cells[7].textContent);
+        if (cells[9]) cells[9].textContent = formatDownText(cells[9].textContent);
+      });
+    }
+
+    function publishTable() {
+      const table = document.querySelector("table");
+      if (!table) return;
+
+      normalizeTable(table);
+      window.parent.postMessage({ type: "legacy-drive-recent-table", tableHtml: table.outerHTML }, "*");
+    }
+
+    window.addEventListener("load", publishTable);
+    requestAnimationFrame(publishTable);
+    setTimeout(publishTable, 150);
   })();
   </script>
 </body>

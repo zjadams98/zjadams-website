@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import re
 import warnings
 from collections import Counter
 from datetime import datetime
@@ -143,6 +144,39 @@ def postseason_week_label(season: int | None, week: int | None) -> str | None:
         mapping = {19: "WC", 20: "DIV", 21: "CC", 22: "SB"}
 
     return mapping.get(week)
+
+
+def format_score_diff(score_diff: Any) -> str:
+    if pd.isna(score_diff):
+        return ""
+
+    text = str(score_diff).strip()
+    if not text:
+        return ""
+    if text.lower() == "tied":
+        return "Tied"
+
+    match = re.match(r"^(?:down\s*)?(-?\d+)$", text, flags=re.IGNORECASE)
+    if not match:
+        return text[0].upper() + text[1:]
+
+    diff = abs(int(match.group(1)))
+    return "Tied" if diff == 0 else f"Down {diff}"
+
+
+def format_down_text(down: Any) -> str | None:
+    if pd.isna(down):
+        return None
+
+    text = str(down).strip()
+    match = re.match(r"^([1-4])(?:down|(?:st|nd|rd|th)?\s*down)?$", text, flags=re.IGNORECASE)
+    if not match:
+        return text or None
+
+    down_int = int(match.group(1))
+    suffixes = {1: "st", 2: "nd", 3: "rd", 4: "th"}
+    suffix = suffixes.get(down_int)
+    return f"{down_int}{suffix} Down" if suffix else None
 
 
 def period_order(p: Any) -> int:
@@ -365,7 +399,7 @@ def process_new_games(
         final_desc = final_row.get("desc")
         final_down = final_row.get("down")
         final_yds = final_row.get("ydstogo")
-        final_down_str = f"{int(final_down)}down" if pd.notna(final_down) and int(final_down) > 0 else None
+        final_down_str = format_down_text(final_down)
         final_yds_str = f"{int(final_yds)}yrdstogo" if pd.notna(final_yds) and int(final_yds) > 0 else None
         season_int = int(row.get("season")) if pd.notna(row.get("season")) else None
         week_int = int(row.get("week")) if pd.notna(row.get("week")) else None
@@ -381,7 +415,7 @@ def process_new_games(
                 "home_team": row.get("home_team"),
                 "game_id": game_id,
                 "period": period,
-                "start_score_diff": f"down {abs(int(row['score_diff']))}",
+                "start_score_diff": format_score_diff(row.get("score_diff")),
                 "start_time": row.get("time"),
                 "end_time": last_play.get("time"),
                 "final_down": final_down_str,
@@ -405,22 +439,28 @@ def _render_section(
     legacydrive_rows: List[LegacyDriveData],
 ) -> str:
     html = f"""
-      <h1>{title}</h1>
-      <div class="subtitle">{subtitle}</div>
+      <div class="leaderboard-toolbar">
+        <div class="leaderboard-info">
+          <h1>{title}</h1>
+          <div class="subtitle">{subtitle}</div>
+        </div>
 
-      <button class="criteria-toggle" type="button" aria-expanded="false" aria-controls="criteria-panel">
-        <span>Legacy Drive Opportunity Criteria</span>
-        <span class="criteria-indicator" aria-hidden="true">+</span>
-      </button>
-      <div class="criteria" id="criteria-panel" hidden>{criteria_html}</div>
+        <div class="leaderboard-controls">
+          <button class="criteria-toggle" type="button" aria-expanded="false" aria-controls="criteria-panel">
+            <span>Legacy Drive Opportunity Criteria</span>
+            <span class="criteria-indicator" aria-hidden="true">+</span>
+          </button>
+          <div class="criteria" id="criteria-panel" hidden>{criteria_html}</div>
 
-      <div class="search-wrap">
-          <div class="search-row">
-              <input id="playerSearch" type="text" autocomplete="off" placeholder="{placeholder}" />
-              <button id="clearSearch" type="button" disabled>Clear</button>
+          <div class="search-wrap">
+              <div class="search-row">
+                  <input id="playerSearch" type="text" autocomplete="off" placeholder="{placeholder}" />
+                  <button id="clearSearch" type="button" disabled>Clear</button>
+              </div>
+              <div class="search-hint">Start typing to see matching players. Click a name to show only that player.</div>
+              <div id="searchDropdown" class="dropdown"></div>
           </div>
-          <div class="search-hint">Start typing to see matching players. Click a name to show only that player.</div>
-          <div id="searchDropdown" class="dropdown"></div>
+        </div>
       </div>
 
       <div class="leaderboard" id="leaderboard">
@@ -485,7 +525,8 @@ def generate_leaderboards_html(
     """
 
     def _build_page(*, page_title: str, section_title: str, subtitle: str, criteria_html: str,
-                    placeholder: str, records: pd.DataFrame, rows: List[LegacyDriveData]) -> str:
+                    placeholder: str, records: pd.DataFrame, rows: List[LegacyDriveData],
+                    source_key: str) -> str:
         html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -515,12 +556,45 @@ def generate_leaderboards_html(
       max-width: 1120px;
       margin: 0 auto;
       line-height: 1.5;
-      padding: 24px 14px 34px;
+      padding: 0 14px 34px;
       color: var(--text);
       background: linear-gradient(180deg, var(--blue-50), #fff 260px);
     }}
-    h1 {{ color: var(--blue-900); font-size: 26px; font-weight: 800; margin: 0 0 6px; }}
-    .subtitle {{ color: var(--muted); font-size: 14px; margin-bottom: 14px; }}
+    .leaderboard-toolbar {{
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 24px 0 14px;
+      background: linear-gradient(180deg, var(--blue-50) 0, rgba(255, 255, 255, 0.98) 72%, rgba(255, 255, 255, 0.94) 100%);
+      border-bottom: 1px solid rgba(199, 210, 254, 0.72);
+      box-shadow: 0 10px 24px rgba(15, 47, 110, 0.07);
+    }}
+    .leaderboard-info {{
+      padding: 14px 16px;
+      border: 1px solid rgba(199, 210, 254, 0.9);
+      border-bottom: 0;
+      border-radius: 8px 8px 0 0;
+      background: rgba(255, 255, 255, 0.94);
+    }}
+    h1 {{
+      color: var(--blue-900);
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0 0 4px;
+    }}
+    .subtitle {{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+      margin: 0;
+    }}
+    .leaderboard-controls {{
+      padding: 12px 16px 14px;
+      border: 1px solid rgba(199, 210, 254, 0.9);
+      border-radius: 0 0 8px 8px;
+      background: rgba(255, 255, 255, 0.94);
+    }}
     .criteria-toggle {{
       display: flex;
       width: 100%;
@@ -550,18 +624,17 @@ def generate_leaderboards_html(
     }}
     .criteria {{
       color: var(--text);
-      font-size: 13px;
-      margin: 0 0 18px;
+      font-size: 12px;
+      margin: 0 0 12px;
       line-height: 1.55;
       padding: 14px 16px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--surface);
-      box-shadow: 0 10px 24px rgba(15, 47, 110, 0.07);
     }}
     .section-header {{ color: var(--blue-800); font-weight: 800; margin-top: 10px; }}
 
-    .leaderboard {{ font-size: 14px; columns: 1; }}
+    .leaderboard {{ font-size: 14px; columns: 1; padding-top: 14px; }}
     .qb-entry {{
       break-inside: avoid;
       margin-bottom: 6px;
@@ -573,13 +646,20 @@ def generate_leaderboards_html(
       box-shadow: 0 6px 18px rgba(15, 47, 110, 0.06);
       transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
     }}
-    .qb-entry:hover {{
+    .qb-entry:hover,
+    .qb-entry.is-open {{
       border-color: var(--blue-700);
       background: var(--blue-50);
       transform: translateY(-1px);
     }}
+    .qb-entry.is-open {{
+      position: sticky;
+      top: var(--toolbar-height, 0px);
+      z-index: 3;
+      box-shadow: 0 10px 22px rgba(15, 47, 110, 0.12);
+    }}
 
-    .search-wrap {{ margin: 10px 0 20px; position: relative; max-width: 560px; }}
+    .search-wrap {{ margin: 0; position: relative; max-width: 560px; }}
     .search-row {{ display: flex; gap: 8px; align-items: center; }}
     input[type="text"] {{
       width: 100%;
@@ -650,7 +730,7 @@ def generate_leaderboards_html(
     }}
     .qb-details th {{
       position: sticky;
-      top: 0;
+      top: calc(var(--toolbar-height, 0px) + var(--open-entry-height, 0px));
       z-index: 2;
       text-align: left;
       padding: 10px 12px;
@@ -692,14 +772,14 @@ def generate_leaderboards_html(
       text-align: center;
     }}
     @media (max-width: 680px) {{
-      body {{ padding: 16px 10px 28px; }}
-      h1 {{ font-size: 22px; }}
+      body {{ padding: 0 10px 28px; }}
+      .leaderboard-toolbar {{ padding-top: 16px; }}
       .search-row {{ align-items: stretch; flex-direction: column; }}
       button {{ width: 100%; }}
     }}
   </style>
 </head>
-<body>
+<body data-legacy-source="{source_key}">
 """
 
         html += _render_section(
@@ -718,12 +798,64 @@ def generate_leaderboards_html(
       return (s || "").toString().trim().toLowerCase();
     }
 
+    function formatScoreDiff(value) {
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+      if (/^tied$/i.test(text)) return "Tied";
+
+      const match = text.match(/^(?:down\\s*)?(-?\\d+)$/i);
+      if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
+
+      const diff = Math.abs(Number(match[1]));
+      return diff === 0 ? "Tied" : `Down ${diff}`;
+    }
+
+    function formatDownText(value) {
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+
+      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
+      if (!match) return text;
+
+      const down = Number(match[1]);
+      const suffixes = { 1: "st", 2: "nd", 3: "rd", 4: "th" };
+      return `${down}${suffixes[down]} Down`;
+    }
+
     const input = document.getElementById("playerSearch");
     const dropdown = document.getElementById("searchDropdown");
     const clearBtn = document.getElementById("clearSearch");
     const entries = Array.from(document.querySelectorAll(".qb-entry"));
+    const toolbar = document.querySelector(".leaderboard-toolbar");
     const criteriaToggle = document.querySelector(".criteria-toggle");
     const criteriaPanel = document.getElementById("criteria-panel");
+
+    function publishLeaderboardSource() {
+      if (window.parent === window) return;
+
+      const source = document.body ? document.body.dataset.legacySource : "";
+      const leaderboard = document.querySelector(".leaderboard");
+      if (!source || !toolbar || !leaderboard) return;
+
+      window.parent.postMessage({
+        type: "legacy-drive-leaderboard-source",
+        source: source,
+        html: `${toolbar.outerHTML}${leaderboard.outerHTML}`,
+        data: getData(),
+      }, "*");
+    }
+
+    function updateStickyOffset() {
+      const height = toolbar ? toolbar.offsetHeight : 0;
+      const openEntry = document.querySelector(".qb-entry.is-open");
+      document.documentElement.style.setProperty("--toolbar-height", `${height}px`);
+      document.documentElement.style.setProperty("--open-entry-height", `${openEntry ? openEntry.offsetHeight : 0}px`);
+    }
+
+    window.addEventListener("resize", updateStickyOffset);
+    window.addEventListener("load", publishLeaderboardSource);
+    requestAnimationFrame(publishLeaderboardSource);
+    setTimeout(publishLeaderboardSource, 150);
 
     if (criteriaToggle && criteriaPanel) {
       criteriaToggle.addEventListener("click", () => {
@@ -732,6 +864,7 @@ def generate_leaderboards_html(
         criteriaPanel.hidden = expanded;
         const indicator = criteriaToggle.querySelector(".criteria-indicator");
         if (indicator) indicator.textContent = expanded ? "+" : "-";
+        requestAnimationFrame(updateStickyOffset);
       });
     }
 
@@ -744,6 +877,7 @@ def generate_leaderboards_html(
       document.querySelectorAll(".qb-details").forEach(el => {
         el.style.display = "none";
       });
+      entries.forEach(entry => entry.classList.remove("is-open"));
     }
 
     function showAll() {
@@ -810,10 +944,13 @@ def generate_leaderboards_html(
 
         if (detailsEl.style.display === "block") {
           detailsEl.style.display = "none";
+          entry.classList.remove("is-open");
+          requestAnimationFrame(updateStickyOffset);
           return;
         }
 
         hideAllDetails();
+        entry.classList.add("is-open");
         detailsEl.style.display = "block";
 
         const rows = getData();
@@ -826,20 +963,20 @@ def generate_leaderboards_html(
         qbRows.sort((a, b) => {
           const aSeason = Number(a.season || 0);
           const bSeason = Number(b.season || 0);
-          if (aSeason !== bSeason) return aSeason - bSeason;
+          if (aSeason !== bSeason) return bSeason - aSeason;
 
           const aWeek = Number(a.week || 0);
           const bWeek = Number(b.week || 0);
-          if (aWeek !== bWeek) return aWeek - bWeek;
+          if (aWeek !== bWeek) return bWeek - aWeek;
 
           const aGame = String(a.game_id || "");
           const bGame = String(b.game_id || "");
-          if (aGame !== bGame) return aGame.localeCompare(bGame);
+          if (aGame !== bGame) return bGame.localeCompare(aGame);
 
           const periodOrder = (p) => (p === "Q4" ? 4 : (p === "OT" ? 5 : 99));
           const aP = periodOrder(a.period);
           const bP = periodOrder(b.period);
-          if (aP !== bP) return aP - bP;
+          if (aP !== bP) return bP - aP;
 
           const toSec = (t) => {
             if (!t) return -1;
@@ -851,7 +988,7 @@ def generate_leaderboards_html(
             return m * 60 + s;
           };
 
-          return toSec(b.start_time) - toSec(a.start_time);
+          return toSec(a.start_time) - toSec(b.start_time);
         });
 
         if (qbRows.length === 0) {
@@ -897,9 +1034,9 @@ def generate_leaderboards_html(
               <td>${drive.away_team || ''}</td>
               <td>${drive.home_team || ''}</td>
               <td>${drive.period || ''}</td>
-              <td>${drive.start_score_diff || ''}</td>
+              <td>${formatScoreDiff(drive.start_score_diff)}</td>
               <td>${timeRange}</td>
-              <td>${drive.final_down || ''}</td>
+              <td>${formatDownText(drive.final_down)}</td>
               <td>${drive.final_yds || drive.final_ydstogo || ''}</td>
               <td>${drive.final_play || ''}</td>
               <td>${finalScore}</td>
@@ -917,6 +1054,7 @@ def generate_leaderboards_html(
     });
 
     showAll();
+    updateStickyOffset();
   })();
   </script>
 
@@ -933,6 +1071,7 @@ def generate_leaderboards_html(
         placeholder="Search a QB (e.g., mahomes)",
         records=reg_records,
         rows=reg_rows,
+        source_key="regular",
     )
 
     post_html = _build_page(
@@ -943,6 +1082,7 @@ def generate_leaderboards_html(
         placeholder="Search a QB (e.g., brady)",
         records=post_records,
         rows=post_rows,
+        source_key="post",
     )
     return reg_html, post_html
 
@@ -998,11 +1138,11 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
         away = esc(r.get("away_team") or "")
         home = esc(r.get("home_team") or "")
         period = esc(r.get("period") or "")
-        diff = esc(r.get("start_score_diff") or "")
+        diff = esc(format_score_diff(r.get("start_score_diff") or ""))
         st = r.get("start_time") or ""
         et = r.get("end_time") or ""
         time_range = esc(f"{st}-{et}" if st and et else (st or et or ""))
-        down = esc(r.get("final_down") or "")
+        down = esc(format_down_text(r.get("final_down")) or "")
         ytg = esc(r.get("final_ydstogo") or "")
         final_play = esc(r.get("final_play") or "")
         new_score = esc(f"{r.get('end_team_score')}-{r.get('end_opp_score')}")
@@ -1038,7 +1178,7 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
   <style>
     html,
     body {{
-      height: 100%;
+      min-height: 100%;
     }}
     body {{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -1049,16 +1189,15 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       color: #172033;
       background: linear-gradient(180deg, #eff6ff, #fff 260px);
       -webkit-text-size-adjust: 100%;
-      overflow: hidden;
+      overflow: visible;
     }}
     .wrap {{
-      height: 100vh;
       margin: 0;
       border: 0;
       border-radius: 0;
       background: #ffffff;
       padding: 0;
-      overflow: auto;
+      overflow: visible;
       -webkit-text-size-adjust: none;
       box-shadow: none;
     }}
@@ -1113,7 +1252,7 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       text-align: center;
     }}
     @media (max-width: 680px) {{
-      body {{ padding: 16px 10px 28px; }}
+      body {{ padding: 0; }}
       h1 {{ font-size: 23px; }}
     }}
   </style>
@@ -1146,18 +1285,49 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
   </div>
   <script>
   (function () {{
-    const tableScroller = document.querySelector(".wrap");
+    function formatScoreDiff(value) {{
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+      if (/^tied$/i.test(text)) return "Tied";
 
-    function publishScroll() {{
-      const scrollY = tableScroller ? tableScroller.scrollTop : (window.scrollY || 0);
-      window.parent.postMessage({{ type: "legacy-drive-recent-scroll", scrollY: scrollY }}, "*");
+      const match = text.match(/^(?:down\\s*)?(-?\\d+)$/i);
+      if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
+
+      const diff = Math.abs(Number(match[1]));
+      return diff === 0 ? "Tied" : `Down ${{diff}}`;
     }}
 
-    if (tableScroller) {{
-      tableScroller.addEventListener("scroll", publishScroll, {{ passive: true }});
+    function formatDownText(value) {{
+      const text = (value || "").toString().trim();
+      if (!text) return "";
+
+      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
+      if (!match) return text;
+
+      const down = Number(match[1]);
+      const suffixes = {{ 1: "st", 2: "nd", 3: "rd", 4: "th" }};
+      return `${{down}}${{suffixes[down]}} Down`;
     }}
-    window.addEventListener("load", publishScroll);
-    publishScroll();
+
+    function normalizeTable(table) {{
+      table.querySelectorAll("tbody tr").forEach(row => {{
+        const cells = row.children;
+        if (cells[7]) cells[7].textContent = formatScoreDiff(cells[7].textContent);
+        if (cells[9]) cells[9].textContent = formatDownText(cells[9].textContent);
+      }});
+    }}
+
+    function publishTable() {{
+      const table = document.querySelector("table");
+      if (!table) return;
+
+      normalizeTable(table);
+      window.parent.postMessage({{ type: "legacy-drive-recent-table", tableHtml: table.outerHTML }}, "*");
+    }}
+
+    window.addEventListener("load", publishTable);
+    requestAnimationFrame(publishTable);
+    setTimeout(publishTable, 150);
   }})();
   </script>
 </body>

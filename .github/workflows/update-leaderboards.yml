@@ -3,7 +3,9 @@ name: Update Legacy Drive Leaderboards
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 12 * * *"
+    # 12:00 UTC = 6:00 AM Central Standard Time / 7:00 AM Central Daylight Time
+    # Runs Monday, Tuesday, and Friday
+    - cron: "0 12 * * 1,2,5"
 
 permissions:
   contents: write
@@ -15,8 +17,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Check NFL season window
+        run: |
+          MONTH=$(date -u +%m)
+          DAY=$(date -u +%d)
+
+          if [ "$MONTH" -ge 9 ]; then
+            echo "Within NFL season window."
+            exit 0
+          fi
+
+          if [ "$MONTH" -eq 1 ]; then
+            echo "Within NFL season window."
+            exit 0
+          fi
+
+          if [ "$MONTH" -eq 2 ] && [ "$DAY" -le 15 ]; then
+            echo "Within NFL season window."
+            exit 0
+          fi
+
+          echo "Outside NFL season window. Skipping update."
+          exit 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -40,7 +63,7 @@ jobs:
 
           if git diff --staged --quiet; then
             echo "No changes to commit."
-            exit 0
+            exit 1
           fi
 
           git commit -m "Update leaderboards (auto)"
