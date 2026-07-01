@@ -778,106 +778,143 @@ def generate_leaderboards_html(
     }}
     @media (max-width: 680px) {{
       body {{
-        padding: 0 10px 28px;
+        padding: 0 6px 22px;
         overflow-x: hidden;
       }}
-      .leaderboard-toolbar {{ padding-top: 16px; }}
-      .search-row {{ align-items: stretch; flex-direction: column; }}
-      button {{ width: 100%; }}
-      .search-wrap {{ max-width: none; }}
-      .dropdown {{ top: calc(100% + 4px); }}
-      .qb-entry {{
-        min-height: 44px;
-        padding: 13px 12px;
-        line-height: 1.3;
+      .leaderboard-toolbar {{
+        padding: 8px 0 6px;
       }}
-      .qb-entry.is-open {{
-        top: 0;
+      .leaderboard-info {{
+        padding: 8px 10px;
       }}
-      .qb-details {{
-        overflow: visible;
+      h1 {{
+        margin-bottom: 2px;
+        font-size: 15px;
       }}
-      .qb-details table,
-      .qb-details thead,
-      .qb-details tbody,
-      .qb-details tr,
-      .qb-details th,
-      .qb-details td {{
-        display: block;
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: none;
+      .subtitle {{
+        font-size: 10px;
+        line-height: 1.2;
       }}
-      .qb-details table {{
-        min-width: 0;
+      .leaderboard-controls {{
+        padding: 7px 10px 8px;
+      }}
+      .criteria-toggle {{
+        min-height: 34px;
+        margin-bottom: 6px;
+        padding: 7px 9px;
+        font-size: 12px;
+        box-shadow: none;
+      }}
+      .criteria {{
+        margin-bottom: 7px;
+        padding: 8px 10px;
+        font-size: 10px;
+        line-height: 1.35;
+      }}
+      .section-header {{
+        margin-top: 6px;
+      }}
+      .leaderboard {{
+        padding-top: 6px;
         font-size: 13px;
       }}
-      .qb-details thead {{
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
+      .search-row {{
+        align-items: center;
+        flex-direction: row;
+        gap: 6px;
       }}
-      .qb-details tbody {{
-        display: grid;
-        gap: 10px;
+      .search-wrap {{ max-width: none; }}
+      input[type="text"] {{
+        min-height: 34px;
+        padding: 7px 9px;
+        font-size: 12px;
       }}
-      .qb-details tr {{
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: #fff;
-        box-shadow: 0 10px 22px rgba(15, 47, 110, 0.08);
-        overflow: hidden;
+      button {{
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 12px;
+      }}
+      .search-row button {{
+        flex: 0 0 70px;
+        width: auto;
+      }}
+      .search-hint {{
+        display: none;
+      }}
+      .dropdown {{ top: calc(100% + 3px); }}
+      .qb-entry {{
+        min-height: 34px;
+        padding: 8px 10px;
+        line-height: 1.25;
+      }}
+      .qb-details {{
+        margin: 6px 0 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+      }}
+      .qb-details table {{
+        width: 1530px;
+        min-width: 1530px;
+        table-layout: fixed;
+        font-size: 11px;
       }}
       .qb-details th {{
-        position: static;
-        padding: 0;
-        border: 0;
+        top: 0;
+        padding: 7px 8px;
+        white-space: nowrap;
       }}
       .qb-details td {{
-        display: grid;
-        grid-template-columns: minmax(96px, 35%) minmax(0, 1fr);
-        gap: 10px;
-        align-items: start;
-        padding: 8px 10px;
-        border-bottom: 1px solid #e5edff;
-        background: #fff !important;
+        padding: 7px 8px;
         line-height: 1.35;
         overflow-wrap: break-word;
         word-break: normal;
         white-space: normal !important;
       }}
-      .qb-details td::before {{
-        content: attr(data-label);
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        line-height: 1.35;
-        text-transform: uppercase;
+      .qb-details th:first-child,
+      .qb-details td:first-child {{
+        position: sticky;
+        left: 0;
+        box-shadow: 1px 0 0 #dbeafe, 8px 0 14px rgba(15, 47, 110, 0.08);
       }}
-      .qb-details td:last-child {{
-        border-bottom: 0;
+      .qb-details th:first-child {{
+        z-index: 5;
+        background: var(--blue-900);
       }}
+      .qb-details td:first-child {{
+        z-index: 3;
+        background: #fff;
+      }}
+      .qb-details tbody tr:nth-child(even) td:first-child {{ background: var(--row); }}
+      .qb-details tbody tr:hover td:first-child {{ background: #eef5ff; }}
+      .qb-details td.result-w:first-child {{ background: var(--success-bg) !important; }}
+      .qb-details td.result-l:first-child {{ background: var(--danger-bg) !important; }}
+      .qb-details th:nth-child(1),
+      .qb-details td:nth-child(1) {{ width: 72px; }}
+      .qb-details th:nth-child(2),
+      .qb-details td:nth-child(2) {{ width: 58px; }}
+      .qb-details th:nth-child(3),
+      .qb-details td:nth-child(3) {{ width: 58px; }}
+      .qb-details th:nth-child(4),
+      .qb-details td:nth-child(4) {{ width: 74px; }}
+      .qb-details th:nth-child(5),
+      .qb-details td:nth-child(5) {{ width: 74px; }}
+      .qb-details th:nth-child(6),
+      .qb-details td:nth-child(6) {{ width: 64px; }}
+      .qb-details th:nth-child(7),
+      .qb-details td:nth-child(7) {{ width: 86px; }}
+      .qb-details th:nth-child(8),
+      .qb-details td:nth-child(8) {{ width: 106px; }}
+      .qb-details th:nth-child(9),
+      .qb-details td:nth-child(9) {{ width: 90px; }}
+      .qb-details th:nth-child(10),
+      .qb-details td:nth-child(10) {{ width: 94px; }}
       .qb-details th:nth-child(11),
-      .qb-details td:nth-child(11),
+      .qb-details td:nth-child(11) {{ width: 390px; }}
+      .qb-details th:nth-child(12),
+      .qb-details td:nth-child(12) {{ width: 84px; }}
       .qb-details th:nth-child(13),
-      .qb-details td:nth-child(13) {{
-        min-width: 0;
-      }}
-      .qb-details td.result-w,
-      .qb-details td.result-l {{
-        background: transparent !important;
-        text-align: left;
-      }}
-      .qb-details td.result-w {{
-        color: var(--success);
-      }}
-      .qb-details td.result-l {{
-        color: var(--danger);
-      }}
+      .qb-details td:nth-child(13) {{ width: 374px; }}
     }}
   </style>
 </head>
@@ -923,22 +960,6 @@ def generate_leaderboards_html(
       const suffixes = { 1: "st", 2: "nd", 3: "rd", 4: "th" };
       return `${down}${suffixes[down]} Down`;
     }
-
-    const detailTableLabels = [
-      "Result",
-      "Year",
-      "Week",
-      "Away Team",
-      "Home Team",
-      "Period",
-      "Score Diff",
-      "Time Range",
-      "Down",
-      "Yards To Go",
-      "Final Play of Drive",
-      "New Score",
-      "Result Explanation",
-    ];
 
     const input = document.getElementById("playerSearch");
     const dropdown = document.getElementById("searchDropdown");
@@ -1146,19 +1167,19 @@ def generate_leaderboards_html(
 
           tableHtml += `
             <tr>
-              <td data-label="${detailTableLabels[0]}" class="${resultClass}">${drive.result || ''}</td>
-              <td data-label="${detailTableLabels[1]}">${drive.season || ''}</td>
-              <td data-label="${detailTableLabels[2]}">${wk}</td>
-              <td data-label="${detailTableLabels[3]}">${drive.away_team || ''}</td>
-              <td data-label="${detailTableLabels[4]}">${drive.home_team || ''}</td>
-              <td data-label="${detailTableLabels[5]}">${drive.period || ''}</td>
-              <td data-label="${detailTableLabels[6]}">${formatScoreDiff(drive.start_score_diff)}</td>
-              <td data-label="${detailTableLabels[7]}">${timeRange}</td>
-              <td data-label="${detailTableLabels[8]}">${formatDownText(drive.final_down)}</td>
-              <td data-label="${detailTableLabels[9]}">${drive.final_yds || drive.final_ydstogo || ''}</td>
-              <td data-label="${detailTableLabels[10]}">${drive.final_play || ''}</td>
-              <td data-label="${detailTableLabels[11]}">${finalScore}</td>
-              <td data-label="${detailTableLabels[12]}">${drive.reason || ''}</td>
+              <td class="${resultClass}">${drive.result || ''}</td>
+              <td>${drive.season || ''}</td>
+              <td>${wk}</td>
+              <td>${drive.away_team || ''}</td>
+              <td>${drive.home_team || ''}</td>
+              <td>${drive.period || ''}</td>
+              <td>${formatScoreDiff(drive.start_score_diff)}</td>
+              <td>${timeRange}</td>
+              <td>${formatDownText(drive.final_down)}</td>
+              <td>${drive.final_yds || drive.final_ydstogo || ''}</td>
+              <td>${drive.final_play || ''}</td>
+              <td>${finalScore}</td>
+              <td>${drive.reason || ''}</td>
             </tr>
           `;
         });
@@ -1246,27 +1267,6 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
              .replace('"', "&quot;")
         )
 
-    recent_table_labels = [
-        "QB Name",
-        "Result",
-        "Year",
-        "Week",
-        "Away Team",
-        "Home Team",
-        "Period",
-        "Score Diff",
-        "Time Range",
-        "Down",
-        "Yards To Go",
-        "Final Play of Drive",
-        "New Score",
-        "Result Explanation",
-    ]
-
-    def data_cell(label: str, value: str, class_name: str | None = None) -> str:
-        class_attr = f' class="{class_name}"' if class_name else ""
-        return f'<td data-label="{label}"{class_attr}>{value}</td>'
-
     table_rows = []
     for r in rows:
         qb = esc(r.get("qb_name") or "")
@@ -1290,22 +1290,22 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
         result_class = "result-w" if r.get("result") == "W" else "result-l"
 
         table_rows.append(
-            "<tr>"
-            + data_cell(recent_table_labels[0], qb)
-            + data_cell(recent_table_labels[1], result, result_class)
-            + data_cell(recent_table_labels[2], season)
-            + data_cell(recent_table_labels[3], wk)
-            + data_cell(recent_table_labels[4], away)
-            + data_cell(recent_table_labels[5], home)
-            + data_cell(recent_table_labels[6], period)
-            + data_cell(recent_table_labels[7], diff)
-            + data_cell(recent_table_labels[8], time_range)
-            + data_cell(recent_table_labels[9], down)
-            + data_cell(recent_table_labels[10], ytg)
-            + data_cell(recent_table_labels[11], final_play)
-            + data_cell(recent_table_labels[12], new_score)
-            + data_cell(recent_table_labels[13], reason)
-            + "</tr>"
+            f"<tr>"
+            f"<td>{qb}</td>"
+            f"<td class=\"{result_class}\">{result}</td>"
+            f"<td>{season}</td>"
+            f"<td>{wk}</td>"
+            f"<td>{away}</td>"
+            f"<td>{home}</td>"
+            f"<td>{period}</td>"
+            f"<td>{diff}</td>"
+            f"<td>{time_range}</td>"
+            f"<td>{down}</td>"
+            f"<td>{ytg}</td>"
+            f"<td>{final_play}</td>"
+            f"<td>{new_score}</td>"
+            f"<td>{reason}</td>"
+            f"</tr>"
         )
 
     return f"""<!DOCTYPE html>
@@ -1399,97 +1399,79 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
     }}
     @media (max-width: 680px) {{
       body {{
-        padding: 10px;
+        padding: 0;
         background: #f8fbff;
         overflow-x: hidden;
       }}
       .wrap {{
-        background: transparent;
-        overflow: visible;
-      }}
-      table,
-      thead,
-      tbody,
-      tr,
-      th,
-      td {{
-        display: block;
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: none;
+        background: #fff;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
       }}
       table {{
-        min-width: 0;
-        font-size: 13px;
-      }}
-      thead {{
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
-      }}
-      tbody {{
-        display: grid;
-        gap: 10px;
-      }}
-      tr {{
-        border: 1px solid #c7d2fe;
-        border-radius: 8px;
-        background: #fff;
-        box-shadow: 0 10px 22px rgba(15, 47, 110, 0.08);
-        overflow: hidden;
+        width: 1540px;
+        min-width: 1540px;
+        table-layout: fixed;
+        font-size: 11px;
       }}
       th {{
-        position: static;
-        padding: 0;
-        border: 0;
+        padding: 7px 8px;
+        white-space: nowrap;
       }}
       td {{
-        display: grid;
-        grid-template-columns: minmax(96px, 35%) minmax(0, 1fr);
-        gap: 10px;
-        align-items: start;
-        padding: 8px 10px;
-        border-bottom: 1px solid #e5edff;
-        background: #fff !important;
+        padding: 7px 8px;
         line-height: 1.35;
         overflow-wrap: break-word;
         word-break: normal;
         white-space: normal !important;
       }}
-      td::before {{
-        content: attr(data-label);
-        color: #53627a;
-        font-size: 11px;
-        font-weight: 800;
-        line-height: 1.35;
-        text-transform: uppercase;
+      th:first-child,
+      td:first-child {{
+        position: sticky;
+        left: 0;
+        box-shadow: 1px 0 0 #dbeafe, 8px 0 14px rgba(15, 47, 110, 0.08);
       }}
-      td:last-child {{
-        border-bottom: 0;
+      th:first-child {{
+        z-index: 5;
+        background: #0f2f6e;
       }}
-      td:nth-child(1) {{
+      td:first-child {{
+        z-index: 3;
         color: #0f2f6e;
+        background: #fff;
         font-weight: 800;
       }}
-      td:nth-child(12),
-      td:nth-child(14) {{
-        min-width: 0;
-      }}
-      td.result-w,
-      td.result-l {{
-        background: transparent !important;
-        text-align: left;
-      }}
-      td.result-w {{
-        color: #10703a;
-      }}
-      td.result-l {{
-        color: #b42334;
-      }}
+      tbody tr:nth-child(even) td:first-child {{ background: #f8fbff; }}
+      tbody tr:hover td:first-child {{ background: #eef5ff; }}
+      th:nth-child(1),
+      td:nth-child(1) {{ width: 100px; }}
+      th:nth-child(2),
+      td:nth-child(2) {{ width: 64px; }}
+      th:nth-child(3),
+      td:nth-child(3) {{ width: 58px; }}
+      th:nth-child(4),
+      td:nth-child(4) {{ width: 64px; }}
+      th:nth-child(5),
+      td:nth-child(5) {{ width: 74px; }}
+      th:nth-child(6),
+      td:nth-child(6) {{ width: 74px; }}
+      th:nth-child(7),
+      td:nth-child(7) {{ width: 64px; }}
+      th:nth-child(8),
+      td:nth-child(8) {{ width: 86px; }}
+      th:nth-child(9),
+      td:nth-child(9) {{ width: 106px; }}
+      th:nth-child(10),
+      td:nth-child(10) {{ width: 90px; }}
+      th:nth-child(11),
+      td:nth-child(11) {{ width: 94px; }}
+      th:nth-child(12),
+      td:nth-child(12) {{ width: 390px; }}
+      th:nth-child(13),
+      td:nth-child(13) {{ width: 80px; }}
+      th:nth-child(14),
+      td:nth-child(14) {{ width: 296px; }}
     }}
   </style>
 </head>

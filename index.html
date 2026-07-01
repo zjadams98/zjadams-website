@@ -599,193 +599,193 @@
       }
 
       .site-header {
-        padding:10px 8px 0;
+        padding:6px 8px 0;
       }
 
       .site-title {
-        margin-bottom:8px;
-        font-size:28px;
+        margin-bottom:4px;
+        font-size:20px;
+        line-height:1.1;
+      }
+
+      .is-legacy-compact .site-header {
+        padding-top:4px;
+      }
+
+      .is-legacy-compact .site-title {
+        margin-bottom:3px;
+        font-size:18px;
       }
 
       .wrap {
-        width:calc(100% - 16px);
-        margin:10px auto 20px;
+        width:calc(100% - 10px);
+        margin:6px auto 16px;
       }
 
       .tabs,
       .subtabs {
         width:100%;
         justify-content:stretch;
+        gap:4px;
+        padding:3px;
       }
 
       .tabbtn,
       .subtabbtn {
-        min-height:42px;
-        padding:10px 12px;
+        min-height:34px;
+        padding:7px 8px;
         touch-action:manipulation;
       }
 
       .tabbtn {
         flex:1 1 0;
-      }
-
-      .subtabbtn {
-        flex:1 1 calc(33.333% - 6px);
         font-size:12px;
       }
 
+      .subtabbtn {
+        flex:1 1 calc(33.333% - 4px);
+        font-size:11px;
+      }
+
       .recent-info {
-        padding:12px;
-        border-radius:var(--radius);
-        border-bottom:1px solid rgba(199, 210, 254, 0.9);
+        padding:8px 10px;
       }
 
       .recent-info h2 {
-        font-size:16px;
+        margin-bottom:2px;
+        font-size:14px;
       }
 
       .recent-info p {
+        font-size:10px;
+        line-height:1.2;
+      }
+
+      .recent-table-host,
+      .leaderboard-host .qb-details {
+        overflow-x:auto;
+        overflow-y:visible;
+        -webkit-overflow-scrolling:touch;
+      }
+
+      .recent-table-host table {
+        width:1540px;
+        min-width:1540px;
+        table-layout:fixed;
         font-size:11px;
       }
 
-      .recent-table-host {
-        margin-top:10px;
-        border:0;
-        border-radius:0;
-        background:transparent;
-        box-shadow:none;
-      }
-
-      .recent-table-host table,
-      .recent-table-host thead,
-      .recent-table-host tbody,
-      .recent-table-host tr,
       .recent-table-host th,
-      .recent-table-host td,
-      .leaderboard-host .qb-details table,
-      .leaderboard-host .qb-details thead,
-      .leaderboard-host .qb-details tbody,
-      .leaderboard-host .qb-details tr,
-      .leaderboard-host .qb-details th,
-      .leaderboard-host .qb-details td {
-        display:block;
-        width:100% !important;
-        min-width:0 !important;
-        max-width:none;
+      .recent-table-host td {
+        padding:7px 8px;
+        white-space:normal;
       }
 
-      .recent-table-host table,
-      .leaderboard-host .qb-details table {
-        min-width:0;
-        table-layout:auto;
-        font-size:13px;
-        border-collapse:separate;
-      }
-
-      .recent-table-host thead,
-      .leaderboard-host .qb-details thead {
-        position:absolute;
-        width:1px;
-        height:1px;
-        margin:-1px;
-        overflow:hidden;
-        clip:rect(0 0 0 0);
+      .recent-table-host th {
+        top:0;
+        z-index:11;
         white-space:nowrap;
       }
 
-      .recent-table-host tbody,
-      .leaderboard-host .qb-details tbody {
-        display:grid;
-        gap:10px;
+      .recent-table-host th:nth-child(1),
+      .recent-table-host td:nth-child(1) { width:100px; }
+      .recent-table-host th:nth-child(2),
+      .recent-table-host td:nth-child(2) { width:64px; }
+      .recent-table-host th:nth-child(3),
+      .recent-table-host td:nth-child(3) { width:58px; }
+      .recent-table-host th:nth-child(4),
+      .recent-table-host td:nth-child(4) { width:64px; }
+      .recent-table-host th:nth-child(5),
+      .recent-table-host td:nth-child(5) { width:74px; }
+      .recent-table-host th:nth-child(6),
+      .recent-table-host td:nth-child(6) { width:74px; }
+      .recent-table-host th:nth-child(7),
+      .recent-table-host td:nth-child(7) { width:64px; }
+      .recent-table-host th:nth-child(8),
+      .recent-table-host td:nth-child(8) { width:86px; }
+      .recent-table-host th:nth-child(9),
+      .recent-table-host td:nth-child(9) { width:106px; }
+      .recent-table-host th:nth-child(10),
+      .recent-table-host td:nth-child(10) { width:90px; }
+      .recent-table-host th:nth-child(11),
+      .recent-table-host td:nth-child(11) { width:94px; }
+      .recent-table-host th:nth-child(12),
+      .recent-table-host td:nth-child(12) { width:390px; }
+      .recent-table-host th:nth-child(13),
+      .recent-table-host td:nth-child(13) { width:80px; }
+      .recent-table-host th:nth-child(14),
+      .recent-table-host td:nth-child(14) { width:296px; }
+
+      .recent-table-host th:first-child,
+      .recent-table-host td:first-child,
+      .leaderboard-host .qb-details th:first-child,
+      .leaderboard-host .qb-details td:first-child {
+        position:sticky;
+        left:0;
+        box-shadow:1px 0 0 #dbeafe, 8px 0 14px rgba(15, 47, 110, 0.08);
       }
 
-      .recent-table-host tr,
-      .leaderboard-host .qb-details tr {
-        border:1px solid rgba(199, 210, 254, 0.95);
-        border-radius:var(--radius);
+      .recent-table-host th:first-child,
+      .leaderboard-host .qb-details th:first-child {
+        z-index:13;
+        background:var(--blue-900);
+      }
+
+      .recent-table-host td:first-child,
+      .leaderboard-host .qb-details td:first-child {
+        z-index:8;
         background:#fff;
-        box-shadow:0 10px 22px rgba(15, 47, 110, 0.08);
-        overflow:hidden;
       }
 
-      .recent-table-host th,
-      .leaderboard-host .qb-details th {
-        position:static;
-        padding:0;
-        border:0;
+      .recent-table-host tbody tr:nth-child(even) td:first-child,
+      .leaderboard-host .qb-details tbody tr:nth-child(even) td:first-child {
+        background:#f8fbff;
       }
 
-      .recent-table-host td,
-      .leaderboard-host .qb-details td {
-        display:grid;
-        grid-template-columns:minmax(96px, 35%) minmax(0, 1fr);
-        gap:10px;
-        align-items:start;
-        padding:8px 10px;
-        border-bottom:1px solid #e5edff;
-        background:#fff !important;
-        line-height:1.35;
-        overflow-wrap:break-word;
-        word-break:normal;
-        white-space:normal !important;
-      }
-
-      .recent-table-host td::before,
-      .leaderboard-host .qb-details td::before {
-        content:attr(data-label);
-        color:var(--muted);
-        font-size:11px;
-        font-weight:800;
-        line-height:1.35;
-        text-transform:uppercase;
-      }
-
-      .recent-table-host tr:last-child td,
-      .leaderboard-host .qb-details tr:last-child td {
-        border-bottom:1px solid #e5edff;
-      }
-
-      .recent-table-host td:last-child,
-      .leaderboard-host .qb-details td:last-child {
-        border-bottom:0;
-      }
-
-      .recent-table-host td:nth-child(1) {
-        font-weight:800;
-        color:var(--blue-900);
-      }
-
-      .recent-table-host td.result-w,
-      .recent-table-host td.result-l,
-      .leaderboard-host .qb-details td.result-w,
-      .leaderboard-host .qb-details td.result-l {
-        background:transparent !important;
-        text-align:left;
-      }
-
-      .recent-table-host td.result-w {
-        color:#10703a;
-      }
-
-      .recent-table-host td.result-l {
-        color:#b42334;
-      }
-
-      .leaderboard-host .qb-details td.result-w {
-        color:#10703a;
-      }
-
-      .leaderboard-host .qb-details td.result-l {
-        color:#b42334;
+      .recent-table-host tbody tr:hover td:first-child,
+      .leaderboard-host .qb-details tbody tr:hover td:first-child {
+        background:#eef5ff;
       }
 
       .leaderboard-host .leaderboard-toolbar {
-        padding-bottom:10px;
+        padding-bottom:6px;
       }
 
-      .leaderboard-host .leaderboard-info,
+      .leaderboard-host .leaderboard-info {
+        padding:8px 10px;
+      }
+
+      .leaderboard-host h1 {
+        margin-bottom:2px;
+        font-size:15px;
+      }
+
+      .leaderboard-host .subtitle {
+        font-size:10px;
+        line-height:1.2;
+      }
+
       .leaderboard-host .leaderboard-controls {
-        padding:12px;
+        padding:7px 10px 8px;
+      }
+
+      .leaderboard-host .criteria-toggle {
+        min-height:34px;
+        margin-bottom:6px;
+        padding:7px 9px;
+        font-size:12px;
+        box-shadow:none;
+      }
+
+      .leaderboard-host .criteria {
+        margin-bottom:7px;
+        padding:8px 10px;
+        font-size:10px;
+        line-height:1.35;
+      }
+
+      .leaderboard-host .section-header {
+        margin-top:6px;
       }
 
       .leaderboard-host .search-wrap {
@@ -793,38 +793,95 @@
       }
 
       .leaderboard-host .search-row {
-        align-items:stretch;
-        flex-direction:column;
+        gap:6px;
+        align-items:center;
+        flex-direction:row;
+      }
+
+      .leaderboard-host input[type="text"] {
+        min-height:34px;
+        padding:7px 9px;
+        font-size:12px;
       }
 
       .leaderboard-host button {
-        width:100%;
+        min-height:34px;
+        padding:7px 10px;
+        font-size:12px;
+      }
+
+      .leaderboard-host .search-row button {
+        flex:0 0 70px;
+        width:auto;
+      }
+
+      .leaderboard-host .search-hint {
+        display:none;
       }
 
       .leaderboard-host .dropdown {
-        top:calc(100% + 4px);
+        top:calc(100% + 3px);
       }
 
       .leaderboard-host .leaderboard {
-        margin-top:10px;
-        border-radius:var(--radius);
+        margin-top:6px;
       }
 
       .leaderboard-host .qb-entry {
-        min-height:44px;
-        padding:13px 12px;
-        line-height:1.3;
+        min-height:34px;
+        padding:8px 10px;
+        line-height:1.25;
+        font-size:13px;
       }
 
       .leaderboard-host .qb-entry.is-open {
-        top:var(--site-chrome-height, 0px);
+        top:calc(var(--site-chrome-height, 0px) + var(--leaderboard-toolbar-height, 0px));
       }
 
-      .leaderboard-host .qb-details {
-        margin:0;
-        border-bottom:1px solid #e5edff;
-        overflow:visible;
+      .leaderboard-host .qb-details table {
+        width:1530px;
+        min-width:1530px;
+        table-layout:fixed;
+        font-size:11px;
       }
+
+      .leaderboard-host .qb-details th,
+      .leaderboard-host .qb-details td {
+        padding:7px 8px;
+        white-space:normal;
+      }
+
+      .leaderboard-host .qb-details th {
+        top:0;
+        white-space:nowrap;
+      }
+
+      .leaderboard-host .qb-details th:nth-child(1),
+      .leaderboard-host .qb-details td:nth-child(1) { width:72px; }
+      .leaderboard-host .qb-details th:nth-child(2),
+      .leaderboard-host .qb-details td:nth-child(2) { width:58px; }
+      .leaderboard-host .qb-details th:nth-child(3),
+      .leaderboard-host .qb-details td:nth-child(3) { width:58px; }
+      .leaderboard-host .qb-details th:nth-child(4),
+      .leaderboard-host .qb-details td:nth-child(4) { width:74px; }
+      .leaderboard-host .qb-details th:nth-child(5),
+      .leaderboard-host .qb-details td:nth-child(5) { width:74px; }
+      .leaderboard-host .qb-details th:nth-child(6),
+      .leaderboard-host .qb-details td:nth-child(6) { width:64px; }
+      .leaderboard-host .qb-details th:nth-child(7),
+      .leaderboard-host .qb-details td:nth-child(7) { width:86px; }
+      .leaderboard-host .qb-details th:nth-child(8),
+      .leaderboard-host .qb-details td:nth-child(8) { width:106px; }
+      .leaderboard-host .qb-details th:nth-child(9),
+      .leaderboard-host .qb-details td:nth-child(9) { width:90px; }
+      .leaderboard-host .qb-details th:nth-child(10),
+      .leaderboard-host .qb-details td:nth-child(10) { width:94px; }
+      .leaderboard-host .qb-details th:nth-child(11),
+      .leaderboard-host .qb-details td:nth-child(11) { width:390px; }
+      .leaderboard-host .qb-details th:nth-child(12),
+      .leaderboard-host .qb-details td:nth-child(12) { width:84px; }
+      .leaderboard-host .qb-details th:nth-child(13),
+      .leaderboard-host .qb-details td:nth-child(13) { width:374px; }
     }
 
     .subtabbtn {
@@ -849,30 +906,6 @@
       background:#fff;
       color:var(--blue-900);
       border-color:#fff;
-    }
-
-    @media (max-width: 720px) {
-      .subtabbtn {
-        padding:10px 12px;
-        font-size:12px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .site-header { padding-top: 14px; }
-      .site-title { margin-bottom: 10px; }
-      .is-legacy-compact .site-header { padding-top: 6px; }
-      .is-legacy-compact .site-title { margin-bottom: 5px; font-size: 20px; }
-
-      .leaderboard-host .search-row {
-        align-items:stretch;
-        flex-direction:column;
-      }
-
-      .leaderboard-host button {
-        width:100%;
-      }
-
     }
 
     a { color: inherit; }
@@ -966,38 +999,6 @@
         data: [],
       },
     };
-    const recentTableLabels = [
-      'QB Name',
-      'Result',
-      'Year',
-      'Week',
-      'Away Team',
-      'Home Team',
-      'Period',
-      'Score Diff',
-      'Time Range',
-      'Down',
-      'Yards To Go',
-      'Final Play of Drive',
-      'New Score',
-      'Result Explanation',
-    ];
-    const detailTableLabels = [
-      'Result',
-      'Year',
-      'Week',
-      'Away Team',
-      'Home Team',
-      'Period',
-      'Score Diff',
-      'Time Range',
-      'Down',
-      'Yards To Go',
-      'Final Play of Drive',
-      'New Score',
-      'Result Explanation',
-    ];
-
     function updateStickyOffsets() {
       const activeLegacyPanel = document.querySelector('#panel-legacy-drives > .panel.active');
       const leaderboardToolbar = activeLegacyPanel?.querySelector('.leaderboard-toolbar');
@@ -1082,12 +1083,6 @@
 
       table.querySelectorAll('tbody tr').forEach((row) => {
         const cells = row.children;
-        const labels = cells.length === recentTableLabels.length ? recentTableLabels : detailTableLabels;
-        Array.from(cells).forEach((cell, index) => {
-          if (!cell.getAttribute('data-label') && labels[index]) {
-            cell.setAttribute('data-label', labels[index]);
-          }
-        });
         if (cells[7]) cells[7].textContent = formatScoreDiff(cells[7].textContent);
         if (cells[9]) cells[9].textContent = formatDownText(cells[9].textContent);
       });
@@ -1159,19 +1154,19 @@
 
         return `
           <tr>
-            <td data-label="${detailTableLabels[0]}" class="${resultClass}">${escapeHtml(drive.result || '')}</td>
-            <td data-label="${detailTableLabels[1]}">${escapeHtml(drive.season || '')}</td>
-            <td data-label="${detailTableLabels[2]}">${escapeHtml(week)}</td>
-            <td data-label="${detailTableLabels[3]}">${escapeHtml(drive.away_team || '')}</td>
-            <td data-label="${detailTableLabels[4]}">${escapeHtml(drive.home_team || '')}</td>
-            <td data-label="${detailTableLabels[5]}">${escapeHtml(drive.period || '')}</td>
-            <td data-label="${detailTableLabels[6]}">${escapeHtml(formatScoreDiff(drive.start_score_diff))}</td>
-            <td data-label="${detailTableLabels[7]}">${escapeHtml(timeRange)}</td>
-            <td data-label="${detailTableLabels[8]}">${escapeHtml(formatDownText(drive.final_down))}</td>
-            <td data-label="${detailTableLabels[9]}">${escapeHtml(drive.final_yds || drive.final_ydstogo || '')}</td>
-            <td data-label="${detailTableLabels[10]}">${escapeHtml(drive.final_play || '')}</td>
-            <td data-label="${detailTableLabels[11]}">${escapeHtml(finalScore)}</td>
-            <td data-label="${detailTableLabels[12]}">${escapeHtml(drive.reason || '')}</td>
+            <td class="${resultClass}">${escapeHtml(drive.result || '')}</td>
+            <td>${escapeHtml(drive.season || '')}</td>
+            <td>${escapeHtml(week)}</td>
+            <td>${escapeHtml(drive.away_team || '')}</td>
+            <td>${escapeHtml(drive.home_team || '')}</td>
+            <td>${escapeHtml(drive.period || '')}</td>
+            <td>${escapeHtml(formatScoreDiff(drive.start_score_diff))}</td>
+            <td>${escapeHtml(timeRange)}</td>
+            <td>${escapeHtml(formatDownText(drive.final_down))}</td>
+            <td>${escapeHtml(drive.final_yds || drive.final_ydstogo || '')}</td>
+            <td>${escapeHtml(drive.final_play || '')}</td>
+            <td>${escapeHtml(finalScore)}</td>
+            <td>${escapeHtml(drive.reason || '')}</td>
           </tr>
         `;
       }).join('');
