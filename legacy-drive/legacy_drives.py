@@ -551,6 +551,11 @@ def generate_leaderboards_html(
       --danger-bg:#fff0f2;
       --shadow:0 16px 38px rgba(15, 47, 110, 0.10);
     }}
+    *,
+    *::before,
+    *::after {{
+      box-sizing: border-box;
+    }}
     body {{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       max-width: 1120px;
@@ -772,10 +777,107 @@ def generate_leaderboards_html(
       text-align: center;
     }}
     @media (max-width: 680px) {{
-      body {{ padding: 0 10px 28px; }}
+      body {{
+        padding: 0 10px 28px;
+        overflow-x: hidden;
+      }}
       .leaderboard-toolbar {{ padding-top: 16px; }}
       .search-row {{ align-items: stretch; flex-direction: column; }}
       button {{ width: 100%; }}
+      .search-wrap {{ max-width: none; }}
+      .dropdown {{ top: calc(100% + 4px); }}
+      .qb-entry {{
+        min-height: 44px;
+        padding: 13px 12px;
+        line-height: 1.3;
+      }}
+      .qb-entry.is-open {{
+        top: 0;
+      }}
+      .qb-details {{
+        overflow: visible;
+      }}
+      .qb-details table,
+      .qb-details thead,
+      .qb-details tbody,
+      .qb-details tr,
+      .qb-details th,
+      .qb-details td {{
+        display: block;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none;
+      }}
+      .qb-details table {{
+        min-width: 0;
+        font-size: 13px;
+      }}
+      .qb-details thead {{
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }}
+      .qb-details tbody {{
+        display: grid;
+        gap: 10px;
+      }}
+      .qb-details tr {{
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 10px 22px rgba(15, 47, 110, 0.08);
+        overflow: hidden;
+      }}
+      .qb-details th {{
+        position: static;
+        padding: 0;
+        border: 0;
+      }}
+      .qb-details td {{
+        display: grid;
+        grid-template-columns: minmax(96px, 35%) minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 8px 10px;
+        border-bottom: 1px solid #e5edff;
+        background: #fff !important;
+        line-height: 1.35;
+        overflow-wrap: break-word;
+        word-break: normal;
+        white-space: normal !important;
+      }}
+      .qb-details td::before {{
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+        text-transform: uppercase;
+      }}
+      .qb-details td:last-child {{
+        border-bottom: 0;
+      }}
+      .qb-details th:nth-child(11),
+      .qb-details td:nth-child(11),
+      .qb-details th:nth-child(13),
+      .qb-details td:nth-child(13) {{
+        min-width: 0;
+      }}
+      .qb-details td.result-w,
+      .qb-details td.result-l {{
+        background: transparent !important;
+        text-align: left;
+      }}
+      .qb-details td.result-w {{
+        color: var(--success);
+      }}
+      .qb-details td.result-l {{
+        color: var(--danger);
+      }}
     }}
   </style>
 </head>
@@ -821,6 +923,22 @@ def generate_leaderboards_html(
       const suffixes = { 1: "st", 2: "nd", 3: "rd", 4: "th" };
       return `${down}${suffixes[down]} Down`;
     }
+
+    const detailTableLabels = [
+      "Result",
+      "Year",
+      "Week",
+      "Away Team",
+      "Home Team",
+      "Period",
+      "Score Diff",
+      "Time Range",
+      "Down",
+      "Yards To Go",
+      "Final Play of Drive",
+      "New Score",
+      "Result Explanation",
+    ];
 
     const input = document.getElementById("playerSearch");
     const dropdown = document.getElementById("searchDropdown");
@@ -1028,19 +1146,19 @@ def generate_leaderboards_html(
 
           tableHtml += `
             <tr>
-              <td class="${resultClass}">${drive.result || ''}</td>
-              <td>${drive.season || ''}</td>
-              <td>${wk}</td>
-              <td>${drive.away_team || ''}</td>
-              <td>${drive.home_team || ''}</td>
-              <td>${drive.period || ''}</td>
-              <td>${formatScoreDiff(drive.start_score_diff)}</td>
-              <td>${timeRange}</td>
-              <td>${formatDownText(drive.final_down)}</td>
-              <td>${drive.final_yds || drive.final_ydstogo || ''}</td>
-              <td>${drive.final_play || ''}</td>
-              <td>${finalScore}</td>
-              <td>${drive.reason || ''}</td>
+              <td data-label="${detailTableLabels[0]}" class="${resultClass}">${drive.result || ''}</td>
+              <td data-label="${detailTableLabels[1]}">${drive.season || ''}</td>
+              <td data-label="${detailTableLabels[2]}">${wk}</td>
+              <td data-label="${detailTableLabels[3]}">${drive.away_team || ''}</td>
+              <td data-label="${detailTableLabels[4]}">${drive.home_team || ''}</td>
+              <td data-label="${detailTableLabels[5]}">${drive.period || ''}</td>
+              <td data-label="${detailTableLabels[6]}">${formatScoreDiff(drive.start_score_diff)}</td>
+              <td data-label="${detailTableLabels[7]}">${timeRange}</td>
+              <td data-label="${detailTableLabels[8]}">${formatDownText(drive.final_down)}</td>
+              <td data-label="${detailTableLabels[9]}">${drive.final_yds || drive.final_ydstogo || ''}</td>
+              <td data-label="${detailTableLabels[10]}">${drive.final_play || ''}</td>
+              <td data-label="${detailTableLabels[11]}">${finalScore}</td>
+              <td data-label="${detailTableLabels[12]}">${drive.reason || ''}</td>
             </tr>
           `;
         });
@@ -1128,6 +1246,27 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
              .replace('"', "&quot;")
         )
 
+    recent_table_labels = [
+        "QB Name",
+        "Result",
+        "Year",
+        "Week",
+        "Away Team",
+        "Home Team",
+        "Period",
+        "Score Diff",
+        "Time Range",
+        "Down",
+        "Yards To Go",
+        "Final Play of Drive",
+        "New Score",
+        "Result Explanation",
+    ]
+
+    def data_cell(label: str, value: str, class_name: str | None = None) -> str:
+        class_attr = f' class="{class_name}"' if class_name else ""
+        return f'<td data-label="{label}"{class_attr}>{value}</td>'
+
     table_rows = []
     for r in rows:
         qb = esc(r.get("qb_name") or "")
@@ -1151,22 +1290,22 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
         result_class = "result-w" if r.get("result") == "W" else "result-l"
 
         table_rows.append(
-            f"<tr>"
-            f"<td>{qb}</td>"
-            f"<td class=\"{result_class}\">{result}</td>"
-            f"<td>{season}</td>"
-            f"<td>{wk}</td>"
-            f"<td>{away}</td>"
-            f"<td>{home}</td>"
-            f"<td>{period}</td>"
-            f"<td>{diff}</td>"
-            f"<td>{time_range}</td>"
-            f"<td>{down}</td>"
-            f"<td>{ytg}</td>"
-            f"<td>{final_play}</td>"
-            f"<td>{new_score}</td>"
-            f"<td>{reason}</td>"
-            f"</tr>"
+            "<tr>"
+            + data_cell(recent_table_labels[0], qb)
+            + data_cell(recent_table_labels[1], result, result_class)
+            + data_cell(recent_table_labels[2], season)
+            + data_cell(recent_table_labels[3], wk)
+            + data_cell(recent_table_labels[4], away)
+            + data_cell(recent_table_labels[5], home)
+            + data_cell(recent_table_labels[6], period)
+            + data_cell(recent_table_labels[7], diff)
+            + data_cell(recent_table_labels[8], time_range)
+            + data_cell(recent_table_labels[9], down)
+            + data_cell(recent_table_labels[10], ytg)
+            + data_cell(recent_table_labels[11], final_play)
+            + data_cell(recent_table_labels[12], new_score)
+            + data_cell(recent_table_labels[13], reason)
+            + "</tr>"
         )
 
     return f"""<!DOCTYPE html>
@@ -1176,6 +1315,11 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recent Legacy Drives (REG + POST)</title>
   <style>
+    *,
+    *::before,
+    *::after {{
+      box-sizing: border-box;
+    }}
     html,
     body {{
       min-height: 100%;
@@ -1197,7 +1341,9 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       border-radius: 0;
       background: #ffffff;
       padding: 0;
-      overflow: visible;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
       -webkit-text-size-adjust: none;
       box-shadow: none;
     }}
@@ -1252,8 +1398,98 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       text-align: center;
     }}
     @media (max-width: 680px) {{
-      body {{ padding: 0; }}
-      h1 {{ font-size: 23px; }}
+      body {{
+        padding: 10px;
+        background: #f8fbff;
+        overflow-x: hidden;
+      }}
+      .wrap {{
+        background: transparent;
+        overflow: visible;
+      }}
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {{
+        display: block;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none;
+      }}
+      table {{
+        min-width: 0;
+        font-size: 13px;
+      }}
+      thead {{
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }}
+      tbody {{
+        display: grid;
+        gap: 10px;
+      }}
+      tr {{
+        border: 1px solid #c7d2fe;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 10px 22px rgba(15, 47, 110, 0.08);
+        overflow: hidden;
+      }}
+      th {{
+        position: static;
+        padding: 0;
+        border: 0;
+      }}
+      td {{
+        display: grid;
+        grid-template-columns: minmax(96px, 35%) minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 8px 10px;
+        border-bottom: 1px solid #e5edff;
+        background: #fff !important;
+        line-height: 1.35;
+        overflow-wrap: break-word;
+        word-break: normal;
+        white-space: normal !important;
+      }}
+      td::before {{
+        content: attr(data-label);
+        color: #53627a;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+        text-transform: uppercase;
+      }}
+      td:last-child {{
+        border-bottom: 0;
+      }}
+      td:nth-child(1) {{
+        color: #0f2f6e;
+        font-weight: 800;
+      }}
+      td:nth-child(12),
+      td:nth-child(14) {{
+        min-width: 0;
+      }}
+      td.result-w,
+      td.result-l {{
+        background: transparent !important;
+        text-align: left;
+      }}
+      td.result-w {{
+        color: #10703a;
+      }}
+      td.result-l {{
+        color: #b42334;
+      }}
     }}
   </style>
 </head>
