@@ -16,7 +16,7 @@ warnings.simplefilter("ignore", category=pd.errors.SettingWithCopyWarning)
 
 BASE_DIR = Path(__file__).resolve().parent
 
-CURRENT_SEASON = 2025
+CURRENT_SEASON = 2026
 LEGACY_DRIVE_CACHE = BASE_DIR / "legacy_drives_cache.json"
 QB_NAME_CACHE = BASE_DIR / "qb_name_cache.json"
 REG_HTML = BASE_DIR / "regular_season_legacy_drives_leaderboard.html"
