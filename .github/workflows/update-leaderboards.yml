@@ -3,12 +3,15 @@ name: Update Legacy Drive Leaderboards
 on:
   workflow_dispatch:
   schedule:
-    # Run every day at 6:00 AM Central, including daylight-saving changes.
-    - cron: "0 6 * * *"
+    - cron: "0 4 * * *"
       timezone: "America/Chicago"
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-legacy-drive-leaderboards
+  cancel-in-progress: false
 
 jobs:
   update-leaderboards:
@@ -24,24 +27,37 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install nfl_data_py pandas
+        run: python -m pip install nfl_data_py pandas
 
       - name: Run legacy drives script
         run: python legacy-drive/legacy_drives.py
 
-      - name: Commit and push if changed
+      - name: Commit generated files
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          set -euo pipefail
 
-          git add -A -- legacy-drive
+          generated_files=(
+            "legacy-drive/regular_season_legacy_drives_leaderboard.html"
+            "legacy-drive/post_season_legacy_drives_leaderboard.html"
+            "legacy-drive/recent_legacy_drives.html"
+            "legacy-drive/legacy_drives_cache.json"
+            "legacy-drive/qb_name_cache.json"
+          )
+
+          for file in "${generated_files[@]}"; do
+            test -f "$file" || { echo "Missing generated file: $file"; exit 1; }
+          done
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "${generated_files[@]}"
 
           if git diff --staged --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update leaderboards (auto)"
+          git status --short
+          git commit -m "Update legacy drive leaderboards"
           git push
