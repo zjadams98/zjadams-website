@@ -166,6 +166,7 @@
   </style>
 </head>
 <body>
+  <div id="generation-metadata" data-generated="2026-09-22 07:56:25.557506" data-min-season="2022" data-max-season="2026" hidden></div>
   <div class="wrap">
     <table>
       <thead>
@@ -230,7 +231,14 @@
       if (!table) return;
 
       normalizeTable(table);
-      window.parent.postMessage({ type: "legacy-drive-recent-table", tableHtml: table.outerHTML }, "*");
+      const metadata = document.getElementById("generation-metadata");
+      window.parent.postMessage({
+        type: "legacy-drive-recent-table",
+        tableHtml: table.outerHTML,
+        generated: metadata?.dataset.generated || "",
+        minSeason: metadata?.dataset.minSeason || "",
+        maxSeason: metadata?.dataset.maxSeason || "",
+      }, "*");
     }
 
     window.addEventListener("load", publishTable);
