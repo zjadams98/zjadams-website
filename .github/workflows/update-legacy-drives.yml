@@ -1,0 +1,77 @@
+name: Update Legacy Drives
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+      timezone: America/Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-legacy-drives
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      TZ: America/Chicago
+      SCRIPT_PATH: legacy-drive/legacy_drivecs.py
+      TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+
+    steps:
+      - name: Check out the default branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Verify script path
+        shell: bash
+        run: |
+          if [[ ! -f "$SCRIPT_PATH" ]]; then
+            echo "::error::Script not found at $SCRIPT_PATH. Correct SCRIPT_PATH to match the repository filename."
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "nfl_data_py==0.3.3" "pandas==1.5.3" "numpy==1.26.4"
+
+      - name: Update leaderboards
+        run: python -u "$SCRIPT_PATH"
+
+      - name: Commit and push generated files
+        shell: bash
+        run: |
+          files=(
+            legacy-drive/regular_season_legacy_drives_leaderboard.html
+            legacy-drive/post_season_legacy_drives_leaderboard.html
+            legacy-drive/recent_legacy_drives.html
+            legacy-drive/legacy_drives_cache.json
+            legacy-drive/qb_name_cache.json
+          )
+          for file in "${files[@]}"; do
+            if [[ -f "$file" ]]; then
+              git add -- "$file"
+            fi
+          done
+
+          if git diff --cached --quiet; then
+            echo "No generated file changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update legacy drive leaderboards"
+          git pull --rebase origin "$TARGET_BRANCH"
+          git push origin "HEAD:$TARGET_BRANCH"
