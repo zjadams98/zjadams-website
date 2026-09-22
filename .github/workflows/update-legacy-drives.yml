@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 60
     env:
       TZ: America/Chicago
-      SCRIPT_PATH: legacy-drive/legacy_drivecs.py
+      SCRIPT_PATH: legacy-drive/legacy_drives.py
       TARGET_BRANCH: ${{ github.event.repository.default_branch }}
 
     steps:
