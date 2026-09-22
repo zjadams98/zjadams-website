@@ -48,13 +48,14 @@ def save_legacydrive_cache(
     last_season_processed: int,
     legacydrive_rows: Sequence[LegacyDriveData],
     legacy_drive_cache: Path = LEGACY_DRIVE_CACHE,
+    last_updated: str | None = None,
 ) -> None:
     payload = {
         "opportunities": list(opportunities),
         "processed_games": list(processed_games),
         "last_season_processed": int(last_season_processed),
         "legacydrive_rows": list(legacydrive_rows),
-        "last_updated": datetime.now().isoformat(),
+        "last_updated": last_updated or datetime.now().isoformat(),
     }
     with legacy_drive_cache.open("w", encoding="utf-8") as f:
         json.dump(payload, f)
@@ -64,12 +65,20 @@ def load_persistent_name_map(qb_name_cache: Path = QB_NAME_CACHE) -> Dict[str, s
     if not qb_name_cache.exists():
         return {}
     with qb_name_cache.open("r", encoding="utf-8") as f:
-        return json.load(f) or {}
+        name_map = json.load(f) or {}
+    # Keep run metadata out of the player-ID mapping used for processing.
+    name_map.pop("_last_updated", None)
+    return name_map
 
 
-def save_persistent_name_map(name_map: Dict[str, str], qb_name_cache: Path = QB_NAME_CACHE) -> None:
+def save_persistent_name_map(
+    name_map: Dict[str, str],
+    qb_name_cache: Path = QB_NAME_CACHE,
+    last_updated: str | None = None,
+) -> None:
+    payload = {**name_map, "_last_updated": last_updated or datetime.now().isoformat()}
     with qb_name_cache.open("w", encoding="utf-8") as f:
-        json.dump(name_map, f)
+        json.dump(payload, f)
 
 
 def seasons_to_load(last_season_processed: int, current_season: int) -> List[int]:
@@ -493,8 +502,9 @@ def generate_leaderboards_html(
     post_records: pd.DataFrame,
     reg_rows: List[LegacyDriveData],
     post_rows: List[LegacyDriveData],
+    generated_ts: str | None = None,
 ) -> tuple[str, str]:
-    generated_ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
     criteria_reg = """
         Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1-8 points. OT: All Drives
@@ -1226,8 +1236,10 @@ def generate_leaderboards_html(
     return reg_html, post_html
 
 
-def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
-    generated_ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+def generate_recent_legacy_drives_html(
+    all_rows: List[LegacyDriveData], generated_ts: str | None = None
+) -> str:
+    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
     min_season = CURRENT_SEASON - 4
 
     rows = [r for r in (all_rows or []) if int(r.get("season") or 0) >= min_season]
@@ -1476,6 +1488,7 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
   </style>
 </head>
 <body>
+  <div id="generation-metadata" data-generated="{generated_ts}" data-min-season="{min_season}" data-max-season="{CURRENT_SEASON}" hidden></div>
   <div class="wrap">
     <table>
       <thead>
@@ -1540,7 +1553,14 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       if (!table) return;
 
       normalizeTable(table);
-      window.parent.postMessage({{ type: "legacy-drive-recent-table", tableHtml: table.outerHTML }}, "*");
+      const metadata = document.getElementById("generation-metadata");
+      window.parent.postMessage({{
+        type: "legacy-drive-recent-table",
+        tableHtml: table.outerHTML,
+        generated: metadata?.dataset.generated || "",
+        minSeason: metadata?.dataset.minSeason || "",
+        maxSeason: metadata?.dataset.maxSeason || "",
+      }}, "*");
     }}
 
     window.addEventListener("load", publishTable);
@@ -1565,6 +1585,9 @@ def _normalize_cached_opportunities(opps: List[Opportunity]) -> List[Opportunity
 
 
 def main() -> None:
+    run_started = datetime.now()
+    run_timestamp = run_started.isoformat()
+    generated_ts = run_started.strftime("%Y-%m-%d %H:%M:%S.%f")
     cached_opportunities, processed_games, last_season_processed, cached_rows = load_legacydrive_cache()
     cached_opportunities = _normalize_cached_opportunities(list(cached_opportunities))
 
@@ -1579,8 +1602,7 @@ def main() -> None:
 
     pbp_all = import_pbp_all(seasons)
     if pbp_all.empty:
-        print("No PBP rows returned. Nothing to do.")
-        return
+        raise RuntimeError("No PBP rows returned; generated files were not updated.")
 
     all_games = set(pbp_all["game_id"].unique())
     new_games = all_games - processed_games
@@ -1608,14 +1630,23 @@ def main() -> None:
         elif len(seasons) > 1:
             last_season_processed = CURRENT_SEASON - 1
 
-        save_legacydrive_cache(opportunities, processed_games, last_season_processed, legacydrive_rows)
-        save_persistent_name_map(passer_name_map)
         print(f"Processed {len(new_games)} new games. Total opportunities: {len(opportunities)}")
     else:
         if new_games:
             print("New games detected but no PBP rows found after filtering. Using cached data only.")
         else:
             print("No new games to process. Using cached data only.")
+
+    # Git tracks file contents rather than filesystem modification times. Save
+    # both caches on every run so their timestamps create a real tracked change.
+    save_legacydrive_cache(
+        opportunities,
+        processed_games,
+        last_season_processed,
+        legacydrive_rows,
+        last_updated=run_timestamp,
+    )
+    save_persistent_name_map(passer_name_map, last_updated=run_timestamp)
 
     if not opportunities:
         print("No legacy drive opportunities found.")
@@ -1635,8 +1666,9 @@ def main() -> None:
         post_records=post_records,
         reg_rows=rows_reg,
         post_rows=rows_post,
+        generated_ts=generated_ts,
     )
-    recent_html = generate_recent_legacy_drives_html(legacydrive_rows)
+    recent_html = generate_recent_legacy_drives_html(legacydrive_rows, generated_ts=generated_ts)
 
     with REG_HTML.open("w", encoding="utf-8") as f:
         f.write(reg_html)

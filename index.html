@@ -947,7 +947,7 @@
       <section id="subpanel-LD-recent" class="panel active" role="tabpanel" aria-labelledby="subtab-LD-recent">
         <div class="recent-info">
           <h2>Recent Legacy Drives (REG + POST)</h2>
-          <p>Most recent first | Seasons: 2021-2025 | Generated: 2026-06-15 17:13</p>
+          <p id="recentGeneratedSummary">Most recent first | Seasons: 2021-2025 | Generated: 2026-06-15 17:13</p>
           <p>Scroll down for older drives (last 5 seasons).</p>
         </div>
         <div class="recent-table-host" id="recentTableHost">
@@ -1351,6 +1351,14 @@
       if (event.data.type === 'legacy-drive-recent-table') {
         if (recentSourceFrame && event.source !== recentSourceFrame.contentWindow) return;
         if (!recentTableHost || typeof event.data.tableHtml !== 'string') return;
+
+        const generatedSummary = document.getElementById('recentGeneratedSummary');
+        if (generatedSummary && event.data.generated) {
+          const seasonRange = event.data.minSeason && event.data.maxSeason
+            ? ` | Seasons: ${event.data.minSeason}-${event.data.maxSeason}`
+            : '';
+          generatedSummary.textContent = `Most recent first${seasonRange} | Generated: ${event.data.generated}`;
+        }
 
         const template = document.createElement('template');
         template.innerHTML = event.data.tableHtml.trim();
