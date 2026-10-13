@@ -2,6 +2,8 @@ name: Update Legacy Drives
 
 on:
   schedule:
+    # 6:00 a.m. Central local time daily (CST/CDT).
+    # GitHub may delay scheduled runs; this is not an exact-start guarantee.
     - cron: '0 6 * * *'
       timezone: America/Chicago
   workflow_dispatch:

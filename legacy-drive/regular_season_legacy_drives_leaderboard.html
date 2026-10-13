@@ -394,7 +394,7 @@
       <div class="leaderboard-toolbar">
         <div class="leaderboard-info">
           <h1>Regular Season Legacy Drives</h1>
-          <div class="subtitle">Seasons: 2000-2026 | Sorted by Legacy Drive Successes | Generated: 2026-10-12 15:10:39.763863</div>
+          <div class="subtitle">Seasons: 2000-2026 | Sorted by Legacy Drive Successes | Generated: 2026-10-13 11:59:16</div>
         </div>
 
         <div class="leaderboard-controls">
@@ -1006,11 +1006,11 @@
     }
 
     function formatScoreDiff(value) {
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
       if (/^tied$/i.test(text)) return "Tied";
 
-      const match = text.match(/^(?:down\\s*)?(-?\\d+)$/i);
+      const match = text.match(/^(?:down\s*)?(-?\d+)(?:\.0+)?$/i);
       if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
 
       const diff = Math.abs(Number(match[1]));
@@ -1018,10 +1018,10 @@
     }
 
     function formatDownText(value) {
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
 
-      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
+      const match = text.match(/^([1-4])(?:\.0+)?(?:down|(?:st|nd|rd|th)?\s*down)?$/i);
       if (!match) return text;
 
       const down = Number(match[1]);

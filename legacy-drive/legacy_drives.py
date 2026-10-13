@@ -165,7 +165,7 @@ def format_score_diff(score_diff: Any) -> str:
     if text.lower() == "tied":
         return "Tied"
 
-    match = re.match(r"^(?:down\s*)?(-?\d+)$", text, flags=re.IGNORECASE)
+    match = re.match(r"^(?:down\s*)?(-?\d+)(?:\.0+)?$", text, flags=re.IGNORECASE)
     if not match:
         return text[0].upper() + text[1:]
 
@@ -178,7 +178,7 @@ def format_down_text(down: Any) -> str | None:
         return None
 
     text = str(down).strip()
-    match = re.match(r"^([1-4])(?:down|(?:st|nd|rd|th)?\s*down)?$", text, flags=re.IGNORECASE)
+    match = re.match(r"^([1-4])(?:\.0+)?(?:down|(?:st|nd|rd|th)?\s*down)?$", text, flags=re.IGNORECASE)
     if not match:
         return text or None
 
@@ -504,7 +504,7 @@ def generate_leaderboards_html(
     post_rows: List[LegacyDriveData],
     generated_ts: str | None = None,
 ) -> tuple[str, str]:
-    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     criteria_reg = """
         Q4: Drive starts at 3:00 or less but &gt; 0:30 left (Unless a Success), down 1-8 points. OT: All Drives
@@ -948,11 +948,11 @@ def generate_leaderboards_html(
     }
 
     function formatScoreDiff(value) {
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
       if (/^tied$/i.test(text)) return "Tied";
 
-      const match = text.match(/^(?:down\\s*)?(-?\\d+)$/i);
+      const match = text.match(/^(?:down\s*)?(-?\d+)(?:\.0+)?$/i);
       if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
 
       const diff = Math.abs(Number(match[1]));
@@ -960,10 +960,10 @@ def generate_leaderboards_html(
     }
 
     function formatDownText(value) {
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
 
-      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
+      const match = text.match(/^([1-4])(?:\.0+)?(?:down|(?:st|nd|rd|th)?\s*down)?$/i);
       if (!match) return text;
 
       const down = Number(match[1]);
@@ -1239,7 +1239,7 @@ def generate_leaderboards_html(
 def generate_recent_legacy_drives_html(
     all_rows: List[LegacyDriveData], generated_ts: str | None = None
 ) -> str:
-    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    generated_ts = generated_ts or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     min_season = CURRENT_SEASON - 4
 
     rows = [r for r in (all_rows or []) if int(r.get("season") or 0) >= min_season]
@@ -1289,7 +1289,7 @@ def generate_recent_legacy_drives_html(
         away = esc(r.get("away_team") or "")
         home = esc(r.get("home_team") or "")
         period = esc(r.get("period") or "")
-        diff = esc(format_score_diff(r.get("start_score_diff") or ""))
+        diff = esc(format_score_diff(r.get("start_score_diff")))
         st = r.get("start_time") or ""
         et = r.get("end_time") or ""
         time_range = esc(f"{st}-{et}" if st and et else (st or et or ""))
@@ -1517,11 +1517,11 @@ def generate_recent_legacy_drives_html(
   <script>
   (function () {{
     function formatScoreDiff(value) {{
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
       if (/^tied$/i.test(text)) return "Tied";
 
-      const match = text.match(/^(?:down\\s*)?(-?\\d+)$/i);
+      const match = text.match(/^(?:down\\s*)?(-?\\d+)(?:\\.0+)?$/i);
       if (!match) return text.charAt(0).toUpperCase() + text.slice(1);
 
       const diff = Math.abs(Number(match[1]));
@@ -1529,10 +1529,10 @@ def generate_recent_legacy_drives_html(
     }}
 
     function formatDownText(value) {{
-      const text = (value || "").toString().trim();
+      const text = (value ?? "").toString().trim();
       if (!text) return "";
 
-      const match = text.match(/^([1-4])(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
+      const match = text.match(/^([1-4])(?:\\.0+)?(?:down|(?:st|nd|rd|th)?\\s*down)?$/i);
       if (!match) return text;
 
       const down = Number(match[1]);
@@ -1587,7 +1587,7 @@ def _normalize_cached_opportunities(opps: List[Opportunity]) -> List[Opportunity
 def main() -> None:
     run_started = datetime.now()
     run_timestamp = run_started.isoformat()
-    generated_ts = run_started.strftime("%Y-%m-%d %H:%M:%S.%f")
+    generated_ts = run_started.strftime("%Y-%m-%d %H:%M:%S")
     cached_opportunities, processed_games, last_season_processed, cached_rows = load_legacydrive_cache()
     cached_opportunities = _normalize_cached_opportunities(list(cached_opportunities))
 
